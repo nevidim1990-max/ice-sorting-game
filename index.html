@@ -8,7 +8,7 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23112633'/%3E%3Cpath d='M32 8 53 20v24L32 56 11 44V20z' fill='%23de9855' stroke='%239fd0e8' stroke-width='4'/%3E%3C/svg%3E">
     <title>Ледяная Сортировка</title>
     <script src="./phaser.min.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Ca2XXVJQ.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-B3rUtUx3.css">
   </head>
   <body>
     <main id="game-root" aria-label="Ледяная Сортировка">
@@ -17,13 +17,15 @@
       <header id="hud" class="hud" hidden>
         <div class="brand-lockup"><span class="brand-mark">ЛС</span><div><strong id="hud-level">Участок 01</strong><small id="hud-subtitle">Прямые стеллажи</small></div></div>
         <div class="hud-stats" aria-live="polite">
-          <div class="stat"><span>Толчки</span><strong id="hud-moves">0 / 48</strong></div>
-          <div class="stat"><span>Сдвиги</span><strong id="hud-pushes">0</strong></div>
-          <div class="stat token-stat"><span>Отогрев</span><strong><img src="./assets/au_collectible_sprite_resource_001-CyuEev0h.png" alt=""> <i id="hud-undo">1</i></strong></div>
+          <div class="stat"><span>Ходы</span><strong id="hud-moves">0 / 48</strong></div>
+          <div class="stat"><span>Толчки</span><strong id="hud-pushes">0</strong></div>
+          <div class="stat"><span>Цели</span><strong id="hud-goals">0 / 3</strong></div>
+          <div class="stat token-stat"><span>Откат</span><strong><img src="./assets/au_collectible_sprite_resource_001-CyuEev0h.png" alt=""> <i id="hud-undo">1</i></strong></div>
         </div>
         <div class="hud-actions">
           <button class="icon-button" id="btn-undo" type="button" aria-label="Отогреть последний ход" title="Отогреть ход · Z">↶</button>
           <button class="icon-button" id="btn-restart" type="button" aria-label="Перезапустить участок" title="Перезапустить участок · R">⟲</button>
+          <button class="icon-button help-button" id="btn-help" type="button" aria-label="Правила и обозначения" title="Правила участка · ?">?</button>
           <button class="icon-button" id="btn-pause" type="button" aria-label="Пауза" title="Пауза · Esc">Ⅱ</button>
         </div>
       </header>

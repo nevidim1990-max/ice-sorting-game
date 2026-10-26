@@ -1,6 +1,6 @@
 {
   "status": "RETEST_REQUIRED",
-  "reason": "Static checks and targeted browser tests, including floor rendering and box interactions in levels 1-2, passed; the full playthrough and release gate remain incomplete.",
+  "reason": "Fresh standalone build loaded; all 12 levels and help cards were visually checked at desktop width, level 12 was smoke-tested on mobile, level 1 push/undo and a solved level 1 were verified, and the extra-moves stamp correctly advanced to level 2. Full puzzle completion remains unverified.",
   "build": "vite build",
   "data_files": [
     "theme.json",
@@ -24,6 +24,8 @@
     "wall_target_actor_visuals": "PASS",
     "box_push_and_undo": "PASS",
     "touch_controls": "PASS",
+    "standalone_launch": "PASS",
+    "level_help_cards": "PASS",
     "victory_state": "PASS",
     "modifier_progression": "PASS",
     "browser_playthrough": "PARTIAL",
