@@ -1,0 +1,12 @@
+[
+  {
+    "uid": "au_player_sprite_entity_001",
+    "reference_id": "entity_001",
+    "template": "humanoid",
+    "declared": "front",
+    "detected": "front",
+    "view": "top_down",
+    "action": "none",
+    "result": "PASS"
+  }
+]
