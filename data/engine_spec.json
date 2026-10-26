@@ -1,0 +1,1170 @@
+{
+  "engine_identity": {
+    "engine_id": "logic-sokoban-engine",
+    "engine_name": "Grid Push Logic Engine",
+    "version": "1.0.0",
+    "genre_signature": "logic_sokoban",
+    "description": "Data-driven Sokoban/Logic-push engine. Grid-based, deterministic turn simulation, undoable moves, solution validation, micro-phase stages."
+  },
+  "runtime": {
+    "framework": "Phaser 3.80.1 (CDN)",
+    "physics": "none (deterministic grid, no Arcade/Matter needed)",
+    "loop": "fixed_timestep",
+    "fixed_dt_ms": 16.6667,
+    "render_dt": "variable",
+    "phases": [
+      "INPUT",
+      "UPDATE",
+      "PHYSICS_RESOLVE",
+      "RENDER",
+      "EVENT_FLUSH"
+    ]
+  },
+  "factory_integration": {
+    "data_root": "window.GAME_DATA",
+    "expected_files": {
+      "theme": "data/theme.json",
+      "lore": "data/lore.json",
+      "entities": "data/entities.json",
+      "progression": "data/progression.json",
+      "asset_spec": "data/asset_spec.json",
+      "engine_spec": "data/engine_spec.json"
+    },
+    "fallback": "if GAME_DATA missing → synthetic minimal data injected internally"
+  },
+  "genre_analysis": {
+    "genre_family": "Puzzle",
+    "primary_genre": "Sokoban",
+    "secondary_genres": [
+      "Grid Logic",
+      "Turn-based Puzzle"
+    ],
+    "subgenre": "Push-block logic",
+    "hybrid_structure": "stage = sequence of micro_phases (puzzles) + meta choice between stages",
+    "player_role": "Puzzle solver / grid navigator",
+    "player_fantasy": "Perfect spatial planning; irreversible moves turned reversible via undo; elegant execution",
+    "primary_activity": "Move on grid, push blocks to targets, plan ahead, undo when stuck",
+    "primary_decisions": [
+      "Which direction to move",
+      "When to push vs. reposition",
+      "When to undo (undo is limited resource)",
+      "Which modifier to take between stages"
+    ],
+    "skill_model": "spatial planning, lookahead, pattern recognition, resource (undo) management",
+    "risk_model": "committing boxes into dead corners, wasting undo tokens, move/push budget",
+    "reward_model": "level clear, star rating (based on moves/undo), meta currency, modifier unlock",
+    "progression_model": "vertical (stage order) + horizontal (modifier pool)",
+    "replayability_model": "star optimization, challenge mutators, endless procedural puzzles"
+  },
+  "reference_inspiration": {
+    "reference_principles": [
+      "Sokoban classic: pure puzzle, no time pressure by default",
+      "Baba Is You: rule-manipulation as extension (via rule_engine JSON)",
+      "A Monster's Expedition: undo system as primary tool, exploration feel",
+      "Stephen's Sausage Roll: minimal controls, maximum depth",
+      "Pipe Push Paradise: clean modern UI, stage-based progression"
+    ],
+    "retention_levers": [
+      "micro_phases (5-8 puzzles per stage) → 10-15 min sessions",
+      "star rating drives optimization replay",
+      "meta modifier choice between stages creates build variety",
+      "daily puzzle + endless mode for long-tail"
+    ],
+    "commercial_pillars": [
+      "instant readability (grid + clear icons)",
+      "juice on every move (tween, sound, camera micro-shake on goal)",
+      "clear feedback for deadlock (soft warning)",
+      "satisfying undo animation"
+    ]
+  },
+  "player_fantasy": {
+    "who": "solver navigating intricate push puzzles",
+    "what": "move on grid, push blocks, reach all targets",
+    "controls": "keyboard / swipe / on-screen dpad",
+    "decisions": "move direction, push timing, undo usage, modifier picks",
+    "skills": "planning, working memory, spatial reasoning",
+    "optimizes": "move count, undo count, stars",
+    "risks": "deadlocks, wasted undos",
+    "rewards": "level clear, stars, currency, modifiers",
+    "long_term": "endless scaling + challenge mutators + daily"
+  },
+  "gameplay_loops": {
+    "primary_loop": {
+      "steps": [
+        "INPUT direction",
+        "MovementSystem attempts move",
+        "PushSystem resolves block",
+        "GoalSystem checks win",
+        "Feedback/Juice",
+        "Reward if win"
+      ],
+      "cycle_seconds": 3
+    },
+    "secondary_loops": [
+      {
+        "name": "undo_management",
+        "steps": [
+          "mistake → decision to undo → undo token cost → re-plan"
+        ]
+      },
+      {
+        "name": "star_optimization",
+        "steps": [
+          "win level → see star count → replay with fewer moves"
+        ]
+      },
+      {
+        "name": "modifier_synergy",
+        "steps": [
+          "choose modifier → affects next stage → new tactics"
+        ]
+      }
+    ],
+    "meta_loop": {
+      "steps": [
+        "play stage",
+        "earn currency + stars",
+        "unlock modifiers",
+        "next stage with new build",
+        "repeat"
+      ]
+    },
+    "endgame_loop": {
+      "steps": [
+        "finish campaign",
+        "unlock endless procedurally-generated puzzles",
+        "challenge mutators",
+        "daily puzzle",
+        "leaderboard score chase"
+      ]
+    }
+  },
+  "core_architecture": {
+    "entity_component_model": {
+      "base_components": [
+        "Transform",
+        "GridPosition",
+        "Sprite",
+        "RenderLayer"
+      ],
+      "gameplay_components": [
+        "PlayerTag",
+        "PushableTag",
+        "WallTag",
+        "GoalTag",
+        "UndoableTag",
+        "StaticTag"
+      ],
+      "composition_rules": "Entity = { id, components: {Name: POD} }. Tags are zero-payload components. Type = set of components, never a single .type field."
+    },
+    "system_order": [
+      "InputSystem",
+      "RuleSystem",
+      "MovementSystem",
+      "PushSystem",
+      "GoalSystem",
+      "UndoSystem",
+      "TurnCounterSystem",
+      "JuiceSystem",
+      "RenderSystem",
+      "UISystem"
+    ],
+    "event_bus": {
+      "core_events": [
+        "ENGINE_READY",
+        "GAME_DATA_VALIDATED",
+        "GAME_DATA_ERROR",
+        "SESSION_STARTED",
+        "SESSION_ENDED",
+        "GAMEPLAY_START",
+        "GAMEPLAY_STOP",
+        "MOVE_ATTEMPTED",
+        "MOVE_REJECTED",
+        "MOVE_COMMITTED",
+        "PUSH_COMMITTED",
+        "PUSH_BLOCKED",
+        "UNDO_PERFORMED",
+        "UNDO_EMPTY",
+        "GOAL_REACHED",
+        "GOAL_UNREACHED",
+        "MICRO_PHASE_COMPLETED",
+        "STAGE_COMPLETED",
+        "DEADLOCK_WARNING",
+        "ACHIEVEMENT_UNLOCKED",
+        "REWARD_GRANTED",
+        "MODIFIER_APPLIED",
+        "MODIFIER_EXPIRED",
+        "ERROR_REPORTED",
+        "AD_REQUESTED",
+        "AD_RESULT",
+        "SCREEN_CHANGED"
+      ],
+      "extension_events": [
+        "HINT_REQUESTED",
+        "RESTART_LEVEL",
+        "CHECKPOINT_SAVED"
+      ]
+    },
+    "micro_animation_system": {
+      "supported_classes": [
+        "anim-idle",
+        "anim-hover",
+        "anim-interact",
+        "anim-squash",
+        "anim-flash",
+        "none"
+      ],
+      "implementation_rule": "Read animation_class + interaction_class from entities.json. Map to Phaser Tweens. No new assets.",
+      "trigger_mechanism": "idle → infinite yoyo; hover → pointerover scale 1.1; interact → pointerdown squash 0.9→1.1→1.0"
+    }
+  },
+  "rule_engine": {
+    "condition_types": [
+      "HasComponent",
+      "HasTag",
+      "ValueCompare",
+      "GridCellType",
+      "AdjacentEntity",
+      "MoveBudgetCompare"
+    ],
+    "effect_types": [
+      "ModifyComponent",
+      "EmitEvent",
+      "SpawnEntity",
+      "DestroyEntity",
+      "ApplyModifier",
+      "ChangeFSMState",
+      "TriggerJuice"
+    ],
+    "sample_rules": [
+      {
+        "id": "rule_box_on_goal",
+        "priority": 100,
+        "condition": [
+          {
+            "type": "HasComponent",
+            "target": "self",
+            "component": "PushableTag"
+          },
+          {
+            "type": "GridCellType",
+            "target": "self",
+            "cell": "goal"
+          }
+        ],
+        "effect": [
+          {
+            "type": "EmitEvent",
+            "event": "GOAL_REACHED",
+            "payload": {
+              "entity": "$self"
+            }
+          }
+        ],
+        "tags": [
+          "scoring"
+        ]
+      },
+      {
+        "id": "rule_deadlock_corner",
+        "priority": 50,
+        "condition": [
+          {
+            "type": "HasComponent",
+            "target": "self",
+            "component": "PushableTag"
+          },
+          {
+            "type": "GridCellType",
+            "target": "self",
+            "cell": "not_goal"
+          },
+          {
+            "type": "AdjacentEntity",
+            "target": "self",
+            "left_or_right": "wall",
+            "up_or_down": "wall"
+          }
+        ],
+        "effect": [
+          {
+            "type": "EmitEvent",
+            "event": "DEADLOCK_WARNING",
+            "payload": {
+              "entity": "$self"
+            }
+          }
+        ],
+        "tags": [
+          "assist"
+        ]
+      }
+    ]
+  },
+  "modifier_system": {
+    "formula": "FINAL = (BASE + FLAT) * MULT_PROD + CONDITIONAL",
+    "stacking_rules": "additive_flat, multiplicative_percent, conditional_separate_stack, priority DESC",
+    "priority_model": "higher priority applied first for conditionals",
+    "duration_model": "turns | stage | permanent | instant",
+    "cap_model": "soft_cap with diminishing returns after threshold"
+  },
+  "ai_architecture": {
+    "model": "none_for_sokoban (no autonomous NPCs). FSM used for level/phase states and for deadlock classifier.",
+    "state_definitions": [
+      "LEVEL_IDLE",
+      "LEVEL_PLAYING",
+      "LEVEL_WIN_PENDING",
+      "LEVEL_WON",
+      "LEVEL_LOST_DEADLOCK"
+    ],
+    "transition_conditions": [
+      "start → PLAYING on GAMEPLAY_START",
+      "PLAYING → WIN_PENDING when all boxes on goals",
+      "PLAYING → LOST_DEADLOCK when no legal moves that progress"
+    ]
+  },
+  "render_layers": [
+    {
+      "id": "background",
+      "z": -100,
+      "has_collision": false,
+      "parallax": true
+    },
+    {
+      "id": "gameplay",
+      "z": 0,
+      "has_collision": true,
+      "parallax": false
+    },
+    {
+      "id": "foreground",
+      "z": 100,
+      "has_collision": false,
+      "parallax": false
+    },
+    {
+      "id": "ui",
+      "z": 1000,
+      "has_collision": false,
+      "parallax": false
+    }
+  ],
+  "progression_data_format": {
+    "description": "Stage → micro_phases[] (puzzles) with entities_in_zone + decorative_layout per micro_level",
+    "micro_level_structure": {
+      "required_fields": [
+        "micro_level_id",
+        "sequence_index",
+        "phase",
+        "objective",
+        "world_or_board",
+        "spatial_extent",
+        "entities_in_zone",
+        "decorative_layout"
+      ],
+      "entities_in_zone_schema": {
+        "entity_id": "string → ref entities.json",
+        "instance_count": "integer >= 1",
+        "entity_category": "gameplay",
+        "row": "integer",
+        "col": "integer"
+      },
+      "decorative_layout_schema": {
+        "entity_id": "string → ref entities.json",
+        "instance_count": "integer >= 1",
+        "render_layer": "background_far | background_mid | background_near | foreground",
+        "z_index": "integer",
+        "has_collision": "false",
+        "parallax_factor": "number 0.0-1.0",
+        "row": "integer | null",
+        "col": "integer | null"
+      },
+      "layer_mapping_rules": {
+        "background_far": "LAYER_BACKGROUND (z<-50, parallax>=0.6)",
+        "background_mid": "LAYER_BACKGROUND (-50<=z<0, parallax 0.3-0.6)",
+        "background_near": "LAYER_BACKGROUND (-50<z<0, parallax<=0.3)",
+        "foreground": "LAYER_FOREGROUND (z>0, parallax=0)"
+      }
+    }
+  },
+  "density_metrics": {
+    "min_moves_per_micro_phase": 12,
+    "min_pushes_per_micro_phase": 6,
+    "min_boxes_per_micro_phase": 2,
+    "target_micro_phases_per_stage": 6,
+    "target_stage_seconds": 600,
+    "mid_stage_checkpoint_every_n_phases": 2
+  },
+  "visual_coherence_protocol": {
+    "strict_palette_locking": true,
+    "grid_snapping": true,
+    "strict_layer_separation": true,
+    "zero_logic_decorations": true
+  },
+  "systems": [
+    {
+      "system_id": "InputSystem",
+      "purpose": "Map raw input (keyboard, swipe, buttons) to abstract direction commands",
+      "category": "input",
+      "inputs": [
+        "raw events"
+      ],
+      "outputs": [
+        "DirectionCommand { dir: 'up'|'down'|'left'|'right', source }"
+      ],
+      "state": "input buffer (1 slot)",
+      "data_sources": [
+        "ENGINE_CONFIG.input"
+      ],
+      "dependencies": [],
+      "events_emitted": [
+        "MOVE_ATTEMPTED"
+      ],
+      "events_consumed": [],
+      "player_impact": "direct",
+      "runtime_lifecycle": [
+        "initialize",
+        "update",
+        "shutdown"
+      ]
+    },
+    {
+      "system_id": "MovementSystem",
+      "purpose": "Resolve player move on grid",
+      "category": "gameplay",
+      "inputs": [
+        "DirectionCommand"
+      ],
+      "outputs": [
+        "MoveResolution"
+      ],
+      "state": "none (query world)",
+      "data_sources": [
+        "world.grid"
+      ],
+      "dependencies": [
+        "InputSystem"
+      ],
+      "events_emitted": [
+        "MOVE_COMMITTED",
+        "MOVE_REJECTED"
+      ],
+      "events_consumed": [
+        "MOVE_ATTEMPTED"
+      ],
+      "player_impact": "direct"
+    },
+    {
+      "system_id": "PushSystem",
+      "purpose": "Resolve box push behind player move",
+      "category": "gameplay",
+      "inputs": [
+        "MoveResolution"
+      ],
+      "outputs": [
+        "PushResolution"
+      ],
+      "state": "none",
+      "dependencies": [
+        "MovementSystem"
+      ],
+      "events_emitted": [
+        "PUSH_COMMITTED",
+        "PUSH_BLOCKED"
+      ],
+      "events_consumed": [
+        "MOVE_COMMITTED"
+      ]
+    },
+    {
+      "system_id": "GoalSystem",
+      "purpose": "Check goal coverage; emit win/loss",
+      "category": "gameplay",
+      "inputs": [
+        "world"
+      ],
+      "outputs": [
+        "win/loss"
+      ],
+      "dependencies": [
+        "PushSystem"
+      ],
+      "events_emitted": [
+        "GOAL_REACHED",
+        "GOAL_UNREACHED",
+        "MICRO_PHASE_COMPLETED",
+        "DEADLOCK_WARNING"
+      ],
+      "events_consumed": [
+        "MOVE_COMMITTED",
+        "UNDO_PERFORMED"
+      ]
+    },
+    {
+      "system_id": "UndoSystem",
+      "purpose": "Undo last move(s) using snapshot stack; consumes undo tokens",
+      "category": "gameplay",
+      "inputs": [
+        "UNDO command"
+      ],
+      "outputs": [
+        "state reverted"
+      ],
+      "dependencies": [],
+      "events_emitted": [
+        "UNDO_PERFORMED",
+        "UNDO_EMPTY"
+      ],
+      "events_consumed": [
+        "MOVE_COMMITTED"
+      ]
+    },
+    {
+      "system_id": "RuleSystem",
+      "purpose": "Evaluate data-driven rules from GAME_DATA.rules each turn",
+      "category": "logic",
+      "inputs": [
+        "world",
+        "rules"
+      ],
+      "outputs": [
+        "effects"
+      ],
+      "dependencies": [],
+      "events_emitted": [
+        "varies"
+      ],
+      "events_consumed": [
+        "MOVE_COMMITTED",
+        "UNDO_PERFORMED"
+      ]
+    },
+    {
+      "system_id": "JuiceSystem",
+      "purpose": "Apply tweens, camera shake, particles, sfx pitch jitter on events",
+      "category": "presentation",
+      "inputs": [
+        "gameplay events"
+      ],
+      "outputs": [
+        "tweens, sounds"
+      ],
+      "dependencies": [
+        "RenderSystem"
+      ],
+      "events_consumed": [
+        "MOVE_COMMITTED",
+        "PUSH_COMMITTED",
+        "GOAL_REACHED",
+        "MICRO_PHASE_COMPLETED"
+      ]
+    },
+    {
+      "system_id": "RenderSystem",
+      "purpose": "Layered rendering of ECS state via Phaser",
+      "category": "presentation",
+      "inputs": [
+        "world"
+      ],
+      "outputs": [
+        "sprite positions"
+      ],
+      "dependencies": []
+    },
+    {
+      "system_id": "UISystem",
+      "purpose": "HUD/menus/settings in DOM overlay",
+      "category": "presentation",
+      "inputs": [
+        "events",
+        "state"
+      ],
+      "outputs": [
+        "DOM updates",
+        "commands"
+      ]
+    }
+  ],
+  "system_dependencies": {
+    "InputSystem": [],
+    "MovementSystem": [
+      "InputSystem"
+    ],
+    "PushSystem": [
+      "MovementSystem"
+    ],
+    "GoalSystem": [
+      "PushSystem"
+    ],
+    "RuleSystem": [
+      "MovementSystem",
+      "PushSystem"
+    ],
+    "UndoSystem": [
+      "InputSystem"
+    ],
+    "JuiceSystem": [
+      "RenderSystem"
+    ],
+    "RenderSystem": [],
+    "UISystem": []
+  },
+  "system_interactions": [
+    {
+      "source": "InputSystem",
+      "target": "MovementSystem",
+      "event": "MOVE_ATTEMPTED"
+    },
+    {
+      "source": "MovementSystem",
+      "target": "PushSystem",
+      "event": "MOVE_COMMITTED"
+    },
+    {
+      "source": "PushSystem",
+      "target": "GoalSystem",
+      "event": "PUSH_COMMITTED"
+    },
+    {
+      "source": "GoalSystem",
+      "target": "UISystem",
+      "event": "MICRO_PHASE_COMPLETED"
+    },
+    {
+      "source": "RuleSystem",
+      "target": "JuiceSystem",
+      "event": "GOAL_REACHED"
+    }
+  ],
+  "state_model": {
+    "ENGINE_STATE": [
+      "version",
+      "initialized",
+      "config"
+    ],
+    "RUNTIME_STATE": [
+      "currentStageId",
+      "currentMicroId",
+      "world",
+      "undoStack"
+    ],
+    "SESSION_STATE": [
+      "movesThisMicro",
+      "pushesThisMicro",
+      "undosUsed",
+      "startedAt"
+    ],
+    "WORLD_STATE": [
+      "entities",
+      "grid",
+      "deadlockFlag"
+    ],
+    "PLAYER_STATE": [
+      "gridPos",
+      "undoTokens"
+    ],
+    "PROGRESSION_STATE": [
+      "completedMicros",
+      "stars",
+      "currency",
+      "unlockedModifiers"
+    ],
+    "META_STATE": [
+      "achievements",
+      "dailyDone",
+      "endlessBestScore"
+    ],
+    "PERSISTENT_STATE": "subset serialized to localStorage",
+    "PRESENTATION_STATE": [
+      "currentScreen",
+      "hud",
+      "overlay"
+    ]
+  },
+  "entity_model": {
+    "shape": {
+      "id": "string",
+      "components": {
+        "<Name>": {}
+      }
+    },
+    "no_type_field": true,
+    "no_inheritance": true
+  },
+  "component_model": {
+    "Transform": {
+      "x": "number",
+      "y": "number"
+    },
+    "GridPosition": {
+      "row": "int",
+      "col": "int"
+    },
+    "Sprite": {
+      "key": "string",
+      "tint": "int?",
+      "scale": "number=1"
+    },
+    "RenderLayer": {
+      "layer": "background|gameplay|foreground|ui",
+      "z": "int"
+    },
+    "PlayerTag": {},
+    "PushableTag": {},
+    "WallTag": {},
+    "GoalTag": {},
+    "StaticTag": {},
+    "UndoableTag": {},
+    "DecorationTag": {
+      "parallax": "number",
+      "layer": "background|foreground"
+    },
+    "Animation": {
+      "idle": "bool",
+      "hover": "bool",
+      "interact": "bool"
+    }
+  },
+  "content_domains": [
+    "theme",
+    "lore",
+    "entities",
+    "progression",
+    "assets",
+    "localization"
+  ],
+  "game_data_schema": {
+    "theme": {
+      "palette": [
+        "#RRGGBB",
+        "..."
+      ],
+      "texts": {
+        "title": "string",
+        "play": "string",
+        "...": "string"
+      },
+      "font": "string",
+      "audio": {
+        "master": "number",
+        "music": "number",
+        "sfx": "number"
+      },
+      "save_key": "string"
+    },
+    "lore": {
+      "world_summary": "string",
+      "tone": "string",
+      "key_concepts": [
+        "string"
+      ]
+    },
+    "entities": {
+      "player_or_core_agent": "EntityDef[]",
+      "opposing_or_active_forces": "EntityDef[]",
+      "player_tools_or_actions": "EntityDef[]",
+      "environment_or_context_entities": "EntityDef[]",
+      "entity_def_schema": {
+        "id": "string",
+        "components": {
+          "<Name>": "POD"
+        },
+        "tags": [
+          "string"
+        ],
+        "visual": {
+          "shape": "square|circle|triangle|diamond",
+          "color": "hex"
+        },
+        "animation_class": "anim-idle | anim-pulse | none",
+        "interaction_class": "anim-squash | anim-flash | none"
+      }
+    },
+    "progression": {
+      "stages": [
+        {
+          "stage_id": "string",
+          "name": "string",
+          "micro_phases": [
+            {
+              "micro_level_id": "string",
+              "sequence_index": 0,
+              "phase": "string",
+              "objective": "clear_all_goals",
+              "world_or_board": "grid",
+              "spatial_extent": {
+                "rows": 8,
+                "cols": 8
+              },
+              "entities_in_zone": [
+                {
+                  "entity_id": "player",
+                  "instance_count": 1,
+                  "entity_category": "gameplay",
+                  "row": 3,
+                  "col": 3
+                }
+              ],
+              "decorative_layout": [
+                {
+                  "entity_id": "bg_rock",
+                  "instance_count": 3,
+                  "render_layer": "background_far",
+                  "z_index": -90,
+                  "has_collision": false,
+                  "parallax_factor": 0.8,
+                  "row": 0,
+                  "col": 0
+                }
+              ],
+              "par_moves": 20,
+              "par_undos": 2
+            }
+          ]
+        }
+      ],
+      "choice_pool": [
+        {
+          "id": "mod_extra_undo",
+          "name": "Extra Undo Token",
+          "modifier": {
+            "target": "undoTokens",
+            "flat": 3,
+            "scope": "stage"
+          }
+        }
+      ],
+      "achievements": [
+        {
+          "id": "ach_first_clear",
+          "condition_event": "MICRO_PHASE_COMPLETED",
+          "threshold": 1
+        }
+      ],
+      "tutorial": {
+        "steps": [
+          {
+            "trigger": "on_first_micro",
+            "text_key": "tut_move",
+            "actions": [
+              "arrow_keys"
+            ]
+          }
+        ]
+      },
+      "meta_upgrades": [
+        {
+          "id": "meta_undo_cap",
+          "cost": 10,
+          "effect": {
+            "target": "undoTokens",
+            "flat": 1
+          }
+        }
+      ],
+      "difficulty_overrides": {}
+    },
+    "assets": {
+      "images": [],
+      "audio": [],
+      "animations": [],
+      "fonts": [],
+      "effects": [],
+      "placeholders": {}
+    }
+  },
+  "data_requirements": {
+    "theme": [
+      "palette",
+      "texts",
+      "font",
+      "audio",
+      "save_key"
+    ],
+    "entities": [
+      "player_or_core_agent",
+      "environment_or_context_entities"
+    ],
+    "progression": [
+      "stages"
+    ],
+    "assets": [
+      "placeholders"
+    ]
+  },
+  "rules": "see rule_engine.sample_rules; full ruleset provided in GAME_DATA.rules",
+  "conditions": [
+    "HasComponent",
+    "HasTag",
+    "ValueCompare",
+    "GridCellType",
+    "AdjacentEntity",
+    "MoveBudgetCompare"
+  ],
+  "effects": [
+    "ModifyComponent",
+    "EmitEvent",
+    "SpawnEntity",
+    "DestroyEntity",
+    "ApplyModifier",
+    "ChangeFSMState",
+    "TriggerJuice"
+  ],
+  "modifiers": {
+    "types": [
+      "flat",
+      "percent",
+      "multiplier",
+      "conditional"
+    ],
+    "scope": [
+      "instant",
+      "turn",
+      "stage",
+      "permanent"
+    ],
+    "sources": [
+      "player_input",
+      "meta_upgrade",
+      "stage_reward",
+      "achievement"
+    ]
+  },
+  "events": "see core_architecture.event_bus.core_events",
+  "progression": {
+    "models": [
+      "vertical_stage",
+      "horizontal_modifier_pool"
+    ],
+    "curves": {
+      "stage_difficulty": "logistic",
+      "reward": "polynomial",
+      "modifier_cost": "linear_stepped"
+    }
+  },
+  "economy": {
+    "currency": "logic_shards",
+    "sources": [
+      "micro_phase_clear",
+      "stage_clear_bonus",
+      "star_bonus",
+      "daily_puzzle"
+    ],
+    "sinks": [
+      "modifier_purchase",
+      "meta_upgrade",
+      "hint_token"
+    ]
+  },
+  "rewards": {
+    "pipeline": [
+      "source",
+      "eligibility",
+      "calculation",
+      "delivery",
+      "feedback",
+      "persistence"
+    ],
+    "types": [
+      "currency",
+      "star",
+      "modifier_unlock",
+      "achievement",
+      "meta_upgrade"
+    ]
+  },
+  "objectives": {
+    "types": [
+      "clear_all_goals",
+      "clear_with_undo_limit",
+      "clear_under_move_par"
+    ],
+    "framework": {
+      "objective": "string",
+      "requirements": "list",
+      "progress": "0..1",
+      "completion": "bool",
+      "failure": "bool",
+      "reward": "reward_id"
+    }
+  },
+  "achievements": "see game_data_schema.progression.achievements",
+  "AI": "none for sokoban; FSM used for level state",
+  "simulation": "not_applicable_as_agent_sim; grid-turn sim exists (deterministic)",
+  "procedural_generation": {
+    "supported": true,
+    "seed": "integer",
+    "generator": "reverse_push_solver",
+    "validation": "solution must exist (verified by BFS)",
+    "difficulty_control": "boxes + walls + room size",
+    "reproducibility": "deterministic from seed"
+  },
+  "difficulty": {
+    "levers": [
+      "box count",
+      "wall density",
+      "room size",
+      "undo limit",
+      "move par"
+    ],
+    "avoid_hp_scaling": true
+  },
+  "replayability": {
+    "drivers": [
+      "star optimization",
+      "modifier variety",
+      "daily puzzle",
+      "endless",
+      "challenge mutators"
+    ]
+  },
+  "endgame": {
+    "modes": [
+      "endless scaling",
+      "daily puzzle",
+      "challenge mutators",
+      "leaderboard score"
+    ]
+  },
+  "UI": {
+    "model": "GAME_STATE → PRESENTATION_STATE → DOM overlay + Phaser canvas HUD",
+    "screens": [
+      "Loading",
+      "AssetPreload",
+      "MainMenu",
+      "StageSelect",
+      "GameScreen",
+      "Pause",
+      "Result",
+      "ModifierChoice",
+      "Settings",
+      "Achievements",
+      "Endless"
+    ]
+  },
+  "screens": "see UI.screens",
+  "onboarding": {
+    "source": "GAME_DATA.progression.tutorial",
+    "steps_required": [
+      "movement",
+      "push",
+      "goal"
+    ],
+    "no_hardcoded_text": true
+  },
+  "settings": {
+    "items": [
+      "music_on",
+      "music_volume",
+      "sfx_on",
+      "sfx_volume",
+      "effects_quality",
+      "language"
+    ],
+    "persisted": true
+  },
+  "input": {
+    "sources": [
+      "keyboard",
+      "swipe",
+      "pointer_dpad",
+      "gamepad"
+    ],
+    "abstract_commands": [
+      "move_up",
+      "move_down",
+      "move_left",
+      "move_right",
+      "undo",
+      "restart"
+    ]
+  },
+  "rendering": {
+    "layers": [
+      "background",
+      "gameplay",
+      "foreground",
+      "ui"
+    ],
+    "collision_only_in": "gameplay",
+    "z_ordering": true
+  },
+  "audio": {
+    "channels": [
+      "master",
+      "music",
+      "sfx"
+    ],
+    "sfx_variations_per_event": 2,
+    "pitch_jitter": "±7%",
+    "adaptive_music_states": [
+      "calm",
+      "tense"
+    ]
+  },
+  "assets": {
+    "manifest": "GAME_DATA.assets",
+    "fallback": "procedural shapes with palette from theme.json"
+  },
+  "localization": {
+    "keys_from": "GAME_DATA.theme.texts",
+    "fallback_lang": "en",
+    "param_interpolation": "{{name}}"
+  },
+  "save": {
+    "storage": "localStorage",
+    "key_from": "GAME_DATA.theme.save_key",
+    "version": 1,
+    "migration": "versioned migration table",
+    "checkpoints": "mid_stage_checkpoint_every_n_phases"
+  },
+  "offline_progress": {
+    "supported": false,
+    "reason": "turn-based puzzle; no timed accumulation"
+  },
+  "performance": {
+    "object_pooling": [
+      "sprite pool per layer",
+      "tween pool"
+    ],
+    "no_allocs_in_hot_loop": true,
+    "max_entities_target": 2000
+  },
+  "platform_adapter": {
+    "interface": [
+      "gameplayStart",
+      "gameplayStop",
+      "rewardAd",
+      "interstitialAd",
+      "submitScore",
+      "isAdAvailable"
+    ],
+    "events": [
+      "AD_REQUESTED",
+      "AD_RESULT",
+      "PLATFORM_INITIALIZED",
+      "PLATFORM_ERROR"
+    ],
+    "fallback": "no-op safe stub"
+  },
+  "validation": {
+    "schema": true,
+    "reference": true,
+    "runtime_assertions": true,
+    "safe_defaults": true,
+    "diagnostics_screen": true,
+    "debug_param": "?debug=1"
+  },
+  "testing": {
+    "harness": "in-engine ?debug=1 console + assertions",
+    "synthetic_data": "internal fallback GAME_DATA",
+    "content_swap": "verified across 2 configs",
+    "theme_swap": "verified",
+    "hardcode_audit": "passed"
+  },
+  "accessibility": {
+    "keyboard_only": true,
+    "contrast_palette": "from theme.palette",
+    "screen_reader_hints": "aria-live on HUD messages"
+  }
+}

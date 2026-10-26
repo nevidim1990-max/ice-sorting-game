@@ -1,0 +1,5343 @@
+[
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 40,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "optional",
+      "density_mode": "sparse",
+      "scale_justification": "Single introduction micro on a 6x6 fixed board with 3 targets, 3 parcels, 48 move limit, and one undo token matches the macro difficulty_metrics and encounter_budget for a sparse first sorting line.",
+      "zone_topology": "Linear start-to-goal board: start at row3 col2, parcel row at row2, target row at row1, with side tokens on row4. One core_board zone because this is a grid puzzle.",
+      "complexity_vector": "quantitative",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.2,
+      "min_goals": 3,
+      "density_percentage": 10,
+      "critical_action": "Push each orange parcel straight upward onto its target without creating a corner deadlock.",
+      "trap": "none",
+      "planning_depth": 2,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 16,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "rows 3-4, cols 1-4 start lane with player and hot tokens"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "row 2 parcel row, cols 1-3"
+          },
+          {
+            "id": "N3",
+            "role": "exit",
+            "spatial_unit": "row 1 target row, cols 1-3"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N3",
+            "type": "main"
+          }
+        ],
+        "optional_zones": [],
+        "distribution": {
+          "N1": [
+            "entity_001",
+            "entity_007",
+            "resource_001"
+          ],
+          "N2": [
+            "entity_002"
+          ],
+          "N3": [
+            "tile_target_tile_location_001"
+          ]
+        }
+      },
+      "self_check": "PASS"
+    },
+    "macro_level_id": "macro_level_01",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 1,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        40,
+        40
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "optional",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_001",
+      "tile_cell_edge_tile_location_001",
+      "tile_target_tile_location_001",
+      "tile_obstacle_tile_location_001",
+      "tile_cell_tile_location_002",
+      "tile_cell_edge_tile_location_002",
+      "tile_target_tile_location_002",
+      "tile_obstacle_tile_location_002",
+      "tile_cell_tile_location_003",
+      "tile_cell_edge_tile_location_003",
+      "tile_target_tile_location_003",
+      "tile_obstacle_tile_location_003",
+      "tile_cell_tile_location_004",
+      "tile_cell_edge_tile_location_004",
+      "tile_target_tile_location_004",
+      "tile_obstacle_tile_location_004",
+      "env_atmo_location_001",
+      "env_atmo_location_002",
+      "env_atmo_location_003",
+      "env_atmo_location_004",
+      "env_depth_location_001_ice_rack",
+      "env_depth_location_001_lamp",
+      "env_depth_location_002_double_cells",
+      "env_depth_location_002_frost_panel",
+      "env_depth_location_003_warm_line",
+      "env_depth_location_003_signal_box",
+      "env_depth_location_004_entry_shelf",
+      "env_depth_location_004_frost_sign",
+      "parallax_world",
+      "entity_001",
+      "entity_002",
+      "entity_007",
+      "resource_001",
+      "entity_006",
+      "faction_001"
+    ],
+    "location_ids": [
+      "location_001",
+      "location_002",
+      "location_003",
+      "location_004"
+    ],
+    "region_ids": [],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_01_micro_01",
+          "sequence_index": 1,
+          "title": "Первый прямой разбор",
+          "phase": "introduction",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 6,
+            "rows": 6,
+            "slots": 0
+          },
+          "spatial_extent": "6x6",
+          "start_point": {
+            "row": 3,
+            "col": 2
+          },
+          "goal_or_exit": {
+            "row": 1,
+            "col": 2,
+            "condition": "all three target cells occupied by pushable parcels"
+          },
+          "resource_limits": {
+            "move_limit": 48,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 1
+          },
+          "win_condition": "All PushableTag entities occupy GridCellType goal cells.",
+          "solvability_constraints": "BFS-verified push sequence exists within 48 moves and 1 undo; no parcel is forced into a border corner before final placement.",
+          "objective": "clear_all_goals",
+          "objective_details": [
+            "Push three orange parcels onto three target cells",
+            "Use at most one hot-token undo",
+            "Avoid corner deadlock"
+          ],
+          "requirements": [
+            "Начать смену после обучения движению.",
+            "faction_001.status = 'active'"
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo",
+            "restart"
+          ],
+          "completion_conditions": [
+            "micro_level_complete",
+            "GOAL_REACHED for 3 PushableTag entities"
+          ],
+          "rewards": [
+            "resource_001.amount += 1"
+          ],
+          "unlocks": [
+            "macro_level_02.unlocked = true"
+          ],
+          "state_changes": [
+            "entity_001.gridPos = (3,2)",
+            "entity_002.instance_count = 3",
+            "entity_007.status = 'available'",
+            "resource_001.status = 'available'",
+            "faction_001.status = 'active'"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "entity_001",
+            "entity_002",
+            "entity_007",
+            "resource_001",
+            "tile_cell_tile_location_001",
+            "tile_cell_edge_tile_location_001",
+            "tile_target_tile_location_001",
+            "tile_obstacle_tile_location_001",
+            "env_atmo_location_001",
+            "parallax_world",
+            "env_depth_location_001_ice_rack",
+            "env_depth_location_001_lamp",
+            "env_depth_location_002_double_cells",
+            "env_depth_location_002_frost_panel",
+            "env_depth_location_003_warm_line",
+            "env_depth_location_003_signal_box",
+            "env_depth_location_004_entry_shelf",
+            "env_depth_location_004_frost_sign"
+          ],
+          "locations_involved": [
+            "location_001",
+            "location_002",
+            "location_003",
+            "location_004"
+          ],
+          "factions_involved": [
+            "faction_001"
+          ],
+          "resources_involved": [
+            "resource_001",
+            "entity_007"
+          ],
+          "conflicts_involved": [],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_001",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 без различимых объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_001_ice_rack",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -60,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 0,
+              "col": 1
+            },
+            {
+              "entity_id": "env_depth_location_001_lamp",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 20,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 0,
+              "col": 4
+            },
+            {
+              "entity_id": "env_depth_location_002_double_cells",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -40,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 5,
+              "col": 1
+            },
+            {
+              "entity_id": "env_depth_location_002_frost_panel",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -55,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 5,
+              "col": 4
+            },
+            {
+              "entity_id": "env_depth_location_003_warm_line",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -35,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 3,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_location_003_signal_box",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 25,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 2,
+              "col": 5
+            },
+            {
+              "entity_id": "env_depth_location_004_entry_shelf",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -50,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 4,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_location_004_frost_sign",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 30,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 1,
+              "col": 5
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 6,
+            "rows": 6,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_tile_location_001",
+              "E": "tile_cell_edge_tile_location_001",
+              "T": "tile_target_tile_location_001",
+              "O": "tile_obstacle_tile_location_001",
+              "X": "empty"
+            },
+            "grid": [
+              "OOOOOO",
+              "OTTTCO",
+              "OCCCCO",
+              "OCCCCO",
+              "OECCEO",
+              "OOOOOO"
+            ]
+          },
+          "light_sources": [],
+          "micro_space": {
+            "description": "A sparse 6x6 frozen sorting board with three target cells along the top lane, three orange parcels in the middle row, the sorter below them, and two hot tokens on the side edge tiles.",
+            "structure_rule": "Single core_board grid; border obstacles enclose a 4x4 playable interior with target row at top and start lane below parcels.",
+            "entry_point": "start_point row3 col2",
+            "exit_point": "goal row1 col2 when all three targets are filled",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_01_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "centered",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 3,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 2,
+                    "col": 1
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 2,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 2,
+                    "col": 3
+                  },
+                  {
+                    "entity_id": "entity_007",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 1
+                  },
+                  {
+                    "entity_id": "resource_001",
+                    "instance_count": 75,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 4
+                  }
+                ],
+                "zone_objective": "Push three orange parcels onto the three target cells while preserving the single hot-token undo."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 42,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "optional",
+      "density_mode": "sparse",
+      "scale_justification": "Макро задаёт одну микро-фазу development с полем 6x7 и целевым ЦБГ 42; лимит ходов 51 из difficulty_metrics сохраняет запас 1.2, три цели и три посылки обеспечивают минимальную плотность и планировочную глубину без перегрузки.",
+      "zone_topology": "Одна core_board-зона: старт в нижней части, три целевые клетки в верхней и средней полосе, ресурс точности на боковом ответвлении, препятствия формируют два коридора.",
+      "complexity_vector": "spatial",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.2,
+      "min_goals": 3,
+      "density_percentage": 11,
+      "critical_action": "Толкать entity_002 так, чтобы каждая посылка встала на T-клетку, не перекрывая второй коридор и не загоняя следующую посылку в угол у obstacle_tile_location_007.",
+      "trap": "Загнать entity_002 в угол рядом с O-клеткой или перекрыть проход к resource_002 до сбора награды.",
+      "planning_depth": 4,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 16,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "нижний центральный проход, row 5 col 2"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "центральная линия клеток и две верхние T-клетки"
+          },
+          {
+            "id": "N3",
+            "role": "branch",
+            "spatial_unit": "боковая клетка row 2 col 4 с resource_002"
+          },
+          {
+            "id": "N4",
+            "role": "hazard_zone",
+            "spatial_unit": "коридор между O-клетками row 2 col 2-3 и row 4 col 4"
+          },
+          {
+            "id": "N5",
+            "role": "exit",
+            "spatial_unit": "средняя T-клетка row 4 col 3 и верхняя T-клетка row 1 col 2"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N1",
+            "to": "N3",
+            "type": "branch"
+          },
+          {
+            "from": "N2",
+            "to": "N4",
+            "type": "main"
+          },
+          {
+            "from": "N4",
+            "to": "N5",
+            "type": "main"
+          },
+          {
+            "from": "N3",
+            "to": "N5",
+            "type": "branch"
+          }
+        ],
+        "optional_zones": [
+          {
+            "node_id": "N3",
+            "reward": "resource_002"
+          }
+        ],
+        "distribution": {
+          "N1": [
+            "entity_001"
+          ],
+          "N2": [
+            "entity_002",
+            "entity_002"
+          ],
+          "N3": [
+            "resource_002"
+          ],
+          "N4": [
+            "tile_obstacle_tile_location_007"
+          ],
+          "N5": [
+            "entity_002",
+            "tile_target_tile_location_007"
+          ]
+        }
+      },
+      "self_check": "PASS"
+    },
+    "macro_level_id": "macro_level_02",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 8,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        36,
+        48
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "optional",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_005",
+      "tile_cell_edge_tile_location_005",
+      "tile_target_tile_location_005",
+      "tile_obstacle_tile_location_005",
+      "tile_cell_tile_location_006",
+      "tile_cell_edge_tile_location_006",
+      "tile_target_tile_location_006",
+      "tile_obstacle_tile_location_006",
+      "tile_cell_tile_location_007",
+      "tile_cell_edge_tile_location_007",
+      "tile_target_tile_location_007",
+      "tile_obstacle_tile_location_007",
+      "tile_cell_region_001",
+      "tile_cell_edge_region_001",
+      "tile_target_region_001",
+      "tile_obstacle_region_001",
+      "env_atmo_location_005",
+      "env_atmo_location_006",
+      "env_atmo_location_007",
+      "env_depth_location_005_precision_stand",
+      "env_depth_location_005_guide_arrow",
+      "env_depth_location_006_shift_board",
+      "env_depth_location_006_ice_bin",
+      "env_depth_location_007_central_arch",
+      "env_depth_location_007_ice_pillar",
+      "env_atmo_region_001",
+      "env_depth_region_001_stellazh",
+      "env_depth_region_001_lotki",
+      "parallax_world",
+      "entity_001",
+      "entity_002",
+      "resource_002",
+      "entity_006",
+      "faction_006"
+    ],
+    "location_ids": [
+      "location_005",
+      "location_006",
+      "location_007"
+    ],
+    "region_ids": [
+      "region_001"
+    ],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_02_micro_01",
+          "sequence_index": 1,
+          "title": "Линия двойных ячеек: участок точной сортировки",
+          "phase": "development",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 6,
+            "rows": 7,
+            "slots": 0
+          },
+          "spatial_extent": "6x7",
+          "start_point": {
+            "row": 5,
+            "col": 2
+          },
+          "goal_or_exit": {
+            "row": 4,
+            "col": 3,
+            "condition": "all_entity_002_on_target_tiles"
+          },
+          "resource_limits": {
+            "move_limit": 51,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 2
+          },
+          "win_condition": "Все три экземпляра entity_002 стоят на T-клетках tile_target_tile_location_007.",
+          "solvability_constraints": "Три посылки и три цели на поле 6x7; лимит 51 ход и 2 отогрева хода; запрещено загонять entity_002 в тупик у O-клеток до заполнения всех T-клеток.",
+          "objective": "clear_all_goals",
+          "objective_details": [
+            "Заполнить три T-клетки экземплярами entity_002.",
+            "Собрать resource_002 на боковой клетке row 2 col 4.",
+            "Не исчерпать undo_limit 2 до завершения заполнения целей."
+          ],
+          "requirements": [
+            "Закрыть первый прямой разбор и получить второй горячий жетон.",
+            "faction_006.status = 'active'"
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo"
+          ],
+          "completion_conditions": [
+            "micro_level_complete",
+            "entity_002.status = 'placed'",
+            "all_target_cells_occupied = true"
+          ],
+          "rewards": [
+            "resource_002",
+            "faction_006"
+          ],
+          "unlocks": [],
+          "state_changes": [
+            "entity_001.gridPos = {row:5,col:2}",
+            "entity_002.status = 'placed'",
+            "resource_002.status = 'collected'",
+            "faction_006.status = 'active'"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "entity_001",
+            "entity_002",
+            "resource_002",
+            "tile_cell_tile_location_007",
+            "tile_cell_edge_tile_location_007",
+            "tile_target_tile_location_007",
+            "tile_obstacle_tile_location_007",
+            "env_atmo_location_007",
+            "env_depth_location_005_precision_stand",
+            "env_depth_location_005_guide_arrow",
+            "env_depth_location_006_shift_board",
+            "env_depth_location_006_ice_bin",
+            "env_depth_location_007_central_arch",
+            "env_depth_location_007_ice_pillar",
+            "env_depth_region_001_stellazh",
+            "env_depth_region_001_lotki",
+            "parallax_world",
+            "faction_006",
+            "entity_006"
+          ],
+          "locations_involved": [
+            "location_005",
+            "location_006",
+            "location_007"
+          ],
+          "factions_involved": [
+            "faction_006"
+          ],
+          "resources_involved": [
+            "resource_002"
+          ],
+          "conflicts_involved": [],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_007",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #9fd0e8 без различимых объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_005_precision_stand",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -70,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 0,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_location_005_guide_arrow",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 10,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 6,
+              "col": 5
+            },
+            {
+              "entity_id": "env_depth_location_006_shift_board",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -40,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 0,
+              "col": 5
+            },
+            {
+              "entity_id": "env_depth_location_006_ice_bin",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -60,
+              "has_collision": false,
+              "parallax_factor": 0.4,
+              "row": 6,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_location_007_central_arch",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -30,
+              "has_collision": false,
+              "parallax_factor": 0.2,
+              "row": 0,
+              "col": 2
+            },
+            {
+              "entity_id": "env_depth_location_007_ice_pillar",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -25,
+              "has_collision": false,
+              "parallax_factor": 0.2,
+              "row": 1,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_region_001_stellazh",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -65,
+              "has_collision": false,
+              "parallax_factor": 0.45,
+              "row": 3,
+              "col": 5
+            },
+            {
+              "entity_id": "env_depth_region_001_lotki",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -55,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 5,
+              "col": 0
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 6,
+            "rows": 7,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_tile_location_007",
+              "E": "tile_cell_edge_tile_location_007",
+              "T": "tile_target_tile_location_007",
+              "O": "tile_obstacle_tile_location_007",
+              "X": "empty"
+            },
+            "grid": [
+              "EEEEEE",
+              "ECTCTE",
+              "ECOOCE",
+              "ECCCCE",
+              "ECCTOE",
+              "ECCCCE",
+              "EEEEEE"
+            ]
+          },
+          "surface_layout": [],
+          "light_sources": [
+            {
+              "id": "light_cold_central_01",
+              "position": {
+                "row": 1,
+                "col": 4
+              },
+              "color": "cold_cyan",
+              "radius": 90,
+              "intensity": 0.55,
+              "flicker": false
+            }
+          ],
+          "micro_space": {
+            "description": "Компактное поле 6x7 с двумя верхними T-клетками, средней T-клеткой, боковым сбором resource_002 и коридором между матовыми O-клетками; маршрут ведёт от нижнего старта к последовательному заполнению трёх целей.",
+            "structure_rule": "Одна core_board-зона; все интерактивные сущности стоят на проходимых C/E/T-клетках, O-клетки формируют два коридора, T-клетки служат целями.",
+            "entry_point": "row 5 col 2",
+            "exit_point": "row 4 col 3",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_02_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "centered",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 5,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 3,
+                    "col": 1
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 3,
+                    "col": 4
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "resource_002",
+                    "instance_count": 80,
+                    "entity_category": "gameplay",
+                    "row": 2,
+                    "col": 4
+                  }
+                ],
+                "zone_objective": "Заполнить три T-клетки экземплярами entity_002, собрать resource_002 и сохранить хотя бы один undo_limit до завершения."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 45,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "no",
+      "density_mode": "sparse",
+      "scale_justification": "7x7 fixed board for 45 target interaction cycles; move limit 54 at 1.2 ratio; 3 goals; sparse decorative density 6-10 props; tile_map full for grid_abstract.",
+      "zone_topology": "single core_board grid with central corridor, dangerous corners, and optional cracked-cell detour",
+      "complexity_vector": "variety/restrictive",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.2,
+      "min_goals": 3,
+      "density_percentage": 12,
+      "critical_action": "push entity_002 through central corridor without stepping twice on cracked cell",
+      "trap": "corner deadlock at row3 col2/col5 and cracked-cell re-entry",
+      "planning_depth": 4,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 16,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "start cell row3 col1"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "central corridor around row2-row4"
+          },
+          {
+            "id": "N3",
+            "role": "hazard_zone",
+            "spatial_unit": "left/right obstacle corners row3 col2 and col5"
+          },
+          {
+            "id": "N4",
+            "role": "optional",
+            "spatial_unit": "cracked-cell detour row4 col4"
+          },
+          {
+            "id": "N5",
+            "role": "exit",
+            "spatial_unit": "target cluster row3 col3, row4 col4, row5 col3"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N3",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N4",
+            "type": "branch"
+          },
+          {
+            "from": "N4",
+            "to": "N5",
+            "type": "branch"
+          },
+          {
+            "from": "N3",
+            "to": "N5",
+            "type": "main"
+          }
+        ],
+        "optional_zones": [
+          {
+            "node_id": "N4",
+            "reward": "safe route around cracked cell"
+          }
+        ],
+        "distribution": {
+          "N1": [
+            "entity_001"
+          ],
+          "N2": [
+            "entity_002"
+          ],
+          "N3": [
+            "tile_obstacle_tile_location_011"
+          ],
+          "N4": [
+            "entity_002"
+          ],
+          "N5": [
+            "tile_target_tile_location_011"
+          ]
+        }
+      },
+      "self_check": "PASS"
+    },
+    "macro_level_id": "macro_level_03",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 4,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        30,
+        60
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "no",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_008",
+      "tile_cell_edge_tile_location_008",
+      "tile_target_tile_location_008",
+      "tile_obstacle_tile_location_008",
+      "tile_cell_tile_location_009",
+      "tile_cell_edge_tile_location_009",
+      "tile_target_tile_location_009",
+      "tile_obstacle_tile_location_009",
+      "tile_cell_tile_location_010",
+      "tile_cell_edge_tile_location_010",
+      "tile_target_tile_location_010",
+      "tile_obstacle_tile_location_010",
+      "tile_cell_tile_location_011",
+      "tile_cell_edge_tile_location_011",
+      "tile_target_tile_location_011",
+      "tile_obstacle_tile_location_011",
+      "env_atmo_location_008",
+      "env_atmo_location_009",
+      "env_atmo_location_010",
+      "env_atmo_location_011",
+      "env_depth_location_008_old_pile",
+      "env_depth_location_008_broken_sign",
+      "env_depth_location_009_right_heap",
+      "env_depth_location_009_cell_marker",
+      "env_depth_location_010_narrow_wall",
+      "env_depth_location_010_warning_post",
+      "env_depth_location_011_double_shelf",
+      "env_depth_location_011_corner_hook",
+      "parallax_world",
+      "entity_001",
+      "entity_002",
+      "entity_005",
+      "faction_005",
+      "conflict_001"
+    ],
+    "location_ids": [
+      "location_008",
+      "location_009",
+      "location_010",
+      "location_011"
+    ],
+    "region_ids": [],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_03_micro_01",
+          "sequence_index": 1,
+          "title": "Тёмные углы завала: треснувший обход",
+          "phase": "expansion",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 7,
+            "rows": 7,
+            "slots": 0
+          },
+          "spatial_extent": "7x7",
+          "start_point": {
+            "row": 3,
+            "col": 1
+          },
+          "goal_or_exit": {
+            "row": 3,
+            "col": 3,
+            "condition": "all_pushables_on_targets"
+          },
+          "resource_limits": {
+            "move_limit": 54,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 2
+          },
+          "win_condition": "all entity_002 instances status = 'on_target'",
+          "solvability_constraints": "BFS-validated push sequence; each box has at least one non-corner push path to a target; undo_limit 2; cracked-cell re-entry forbidden",
+          "objective": "Провести посылки мимо угловых ловушек и не пройти дважды по одной треснувшей клетке.",
+          "objective_details": [
+            "Не загонять entity_002 в углы без target_tile.",
+            "Не проходить повторно по треснувшей клетке после первого толчка.",
+            "Использовать не более 54 толчков и 2 отогревов хода."
+          ],
+          "requirements": [
+            "Разобрать линию двойных ячеек.",
+            "mech_thin_ice_active",
+            "move_limit = 54",
+            "undo_limit = 2"
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo",
+            "restart"
+          ],
+          "completion_conditions": [
+            "all entity_002 instances status = 'on_target'",
+            "trigger_macro_level_03_micro_01_exit",
+            "micro_level_complete"
+          ],
+          "rewards": [
+            "MICRO_PHASE_COMPLETED",
+            "star_rating_updated"
+          ],
+          "unlocks": [
+            "trigger_macro_level_03_exit"
+          ],
+          "state_changes": [
+            "conflict_001.status = 'avoided'",
+            "macro_level_03.progress = 1",
+            "entity_002.deadlock_flag = false"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "entity_001",
+            "entity_002",
+            "entity_005",
+            "tile_cell_tile_location_011",
+            "tile_cell_edge_tile_location_011",
+            "tile_target_tile_location_011",
+            "tile_obstacle_tile_location_011"
+          ],
+          "locations_involved": [
+            "location_008",
+            "location_009",
+            "location_010",
+            "location_011"
+          ],
+          "factions_involved": [
+            "faction_005"
+          ],
+          "resources_involved": [],
+          "conflicts_involved": [
+            "conflict_001"
+          ],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_008",
+              "render_method": "engine_gradient",
+              "gradient_description": "Затемнённый градиент от #1b2a3a к #3a4650 без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_009",
+              "render_method": "engine_gradient",
+              "gradient_description": "Градиент от #3f8fb8 к #1b2a3a без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_010",
+              "render_method": "engine_gradient",
+              "gradient_description": "Плотный градиент от #1b2a3a к #8a9aa8 без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_011",
+              "render_method": "engine_gradient",
+              "gradient_description": "Угловой градиент от #1b2a3a к #3a4650 без различимых объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_008_old_pile",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -40,
+              "has_collision": false,
+              "parallax_factor": 0.4,
+              "row": 0,
+              "col": 1
+            },
+            {
+              "entity_id": "env_depth_location_008_broken_sign",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -39,
+              "has_collision": false,
+              "parallax_factor": 0.4,
+              "row": 0,
+              "col": 5
+            },
+            {
+              "entity_id": "env_depth_location_009_right_heap",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -20,
+              "has_collision": false,
+              "parallax_factor": 0.6,
+              "row": 6,
+              "col": 1
+            },
+            {
+              "entity_id": "env_depth_location_009_cell_marker",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -19,
+              "has_collision": false,
+              "parallax_factor": 0.6,
+              "row": 6,
+              "col": 5
+            },
+            {
+              "entity_id": "env_depth_location_010_narrow_wall",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 20,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 2,
+              "col": 6
+            },
+            {
+              "entity_id": "env_depth_location_010_warning_post",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 21,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 4,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_location_011_double_shelf",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -38,
+              "has_collision": false,
+              "parallax_factor": 0.4,
+              "row": 1,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_location_011_corner_hook",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 22,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 5,
+              "col": 6
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 7,
+            "rows": 7,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_tile_location_011",
+              "E": "tile_cell_edge_tile_location_011",
+              "T": "tile_target_tile_location_011",
+              "O": "tile_obstacle_tile_location_011",
+              "X": "empty"
+            },
+            "grid": [
+              "EEEEEEE",
+              "ECCOCCE",
+              "ECCCCCE",
+              "ECOTCOE",
+              "ECCCTCE",
+              "ECCTCCE",
+              "EEEEEEE"
+            ]
+          },
+          "surface_layout": [],
+          "light_sources": [],
+          "micro_space": {
+            "description": "Тёмный угловой участок завала с центральным коридором, двумя опасными углами и опциональным обходом треснувшей клетки.",
+            "structure_rule": "single core_board grid; main route from start through central corridor to target cluster; branch around cracked cell",
+            "entry_point": "row3 col1",
+            "exit_point": "row3 col3",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_03_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "symmetric",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 3,
+                    "col": 1
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 1,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 2,
+                    "col": 3
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 1,
+                    "col": 4
+                  }
+                ],
+                "zone_objective": "Провести три посылки к трём ячейкам, избегая углов и повторного прохода по треснувшей клетке."
+              }
+            ]
+          },
+          "encounter_budget": {
+            "total_interactions": 4
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 43,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "optional",
+      "density_mode": "sparse",
+      "scale_justification": "Один тесный поворот 8x7 с тремя целями и тремя посылками; target_interaction_cycles=43 соответствует challenge-фазе; move_limit=60 при коэффициенте запаса 1.25.",
+      "zone_topology": "Единая core_board-зона с тремя целевыми карманами, центральным препятствием и безопасным внешним обходом.",
+      "complexity_vector": "combinatorial",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.25,
+      "min_goals": 3,
+      "density_percentage": 13,
+      "critical_action": "Затолкнуть третью посылку в нижнюю левую ячейку, сохранив хотя бы один горячий жетон.",
+      "trap": "Посылка, зажатая в углу row 4 col 3 рядом с препятствием, требует обхода по внешнему краю.",
+      "planning_depth": 4,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 16,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "row 5 col 5"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "row 4 col 5"
+          },
+          {
+            "id": "N3",
+            "role": "hazard_zone",
+            "spatial_unit": "row 4 col 3"
+          },
+          {
+            "id": "N4",
+            "role": "reward_zone",
+            "spatial_unit": "row 2 col 2"
+          },
+          {
+            "id": "N5",
+            "role": "exit",
+            "spatial_unit": "row 2 col 5"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N3",
+            "type": "branch"
+          },
+          {
+            "from": "N2",
+            "to": "N4",
+            "type": "main"
+          },
+          {
+            "from": "N4",
+            "to": "N5",
+            "type": "main"
+          }
+        ],
+        "optional_zones": [
+          {
+            "node_id": "N3",
+            "reward": "safe detour preserving one undo token"
+          }
+        ],
+        "distribution": {
+          "N1": [
+            "entity_001"
+          ],
+          "N2": [
+            "entity_002"
+          ],
+          "N3": [
+            "entity_002"
+          ],
+          "N4": [
+            "entity_002"
+          ],
+          "N5": [
+            "tile_target_tile_location_013"
+          ]
+        }
+      },
+      "self_check": "PASS"
+    },
+    "macro_level_id": "macro_level_04",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 6,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        30,
+        60
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "optional",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_012",
+      "tile_cell_edge_tile_location_012",
+      "tile_target_tile_location_012",
+      "tile_obstacle_tile_location_012",
+      "tile_cell_tile_location_013",
+      "tile_cell_edge_tile_location_013",
+      "tile_target_tile_location_013",
+      "tile_obstacle_tile_location_013",
+      "tile_cell_tile_location_014",
+      "tile_cell_edge_tile_location_014",
+      "tile_target_tile_location_014",
+      "tile_obstacle_tile_location_014",
+      "tile_cell_region_002",
+      "tile_cell_edge_region_002",
+      "tile_target_region_002",
+      "tile_obstacle_region_002",
+      "env_atmo_location_012",
+      "env_atmo_location_013",
+      "env_atmo_location_014",
+      "env_depth_location_012_turn_rail",
+      "env_depth_location_012_frost_clock",
+      "env_depth_location_013_stone_corner",
+      "env_depth_location_013_shift_crate",
+      "env_depth_location_014_last_heap",
+      "env_depth_location_014_end_lamp",
+      "env_atmo_region_002",
+      "env_depth_region_002_upor",
+      "env_depth_region_002_plastina",
+      "parallax_world",
+      "entity_001",
+      "entity_002",
+      "entity_005",
+      "faction_005"
+    ],
+    "location_ids": [
+      "location_012",
+      "location_013",
+      "location_014"
+    ],
+    "region_ids": [
+      "region_002"
+    ],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_04_micro_01",
+          "sequence_index": 1,
+          "title": "Тесный угол смены",
+          "phase": "challenge",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 8,
+            "rows": 7,
+            "slots": 0
+          },
+          "spatial_extent": "8x7",
+          "start_point": {
+            "row": 5,
+            "col": 5
+          },
+          "goal_or_exit": {
+            "row": 2,
+            "col": 2,
+            "condition": "all entity_002 instances occupy tile_target_tile_location_013 cells and at least one undo token remains"
+          },
+          "resource_limits": {
+            "move_limit": 60,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 2
+          },
+          "win_condition": "all entity_002 instances occupy tile_target_tile_location_013 cells",
+          "solvability_constraints": "BFS-validated; each entity_002 instance has an unobstructed route to a distinct tile_target_tile_location_013 cell; no initial deadlock corners.",
+          "objective": "Push all three entity_002 boxes onto the tile_target_tile_location_013 cells while preserving at least one undo token.",
+          "objective_details": [
+            "Push three entity_002 boxes onto three tile_target_tile_location_013 cells.",
+            "Preserve at least one undo token by avoiding deadlock recovery.",
+            "Use the outer edge to bypass the cracked inner route near row 4 col 3."
+          ],
+          "requirements": [
+            "Пройти первые углы без потери всех жетонов.",
+            "entity_001 starts at row 5 col 5",
+            "at least one undo token remains after completion"
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo",
+            "restart"
+          ],
+          "completion_conditions": [
+            "entity_002.instances_on_targets = 3",
+            "micro_level_complete",
+            "Тесный угол разобран, ячейки заняты, жетон сохранён."
+          ],
+          "rewards": [
+            "save_undo_tokens"
+          ],
+          "unlocks": [
+            "trigger_region_002_transition"
+          ],
+          "state_changes": [
+            "entity_001.undoTokens = 1",
+            "faction_005.status = 'cleared'",
+            "region_002.status = 'safe_route_open'"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "tile_cell_tile_location_012",
+            "tile_cell_edge_tile_location_012",
+            "tile_target_tile_location_012",
+            "tile_obstacle_tile_location_012",
+            "tile_cell_tile_location_013",
+            "tile_cell_edge_tile_location_013",
+            "tile_target_tile_location_013",
+            "tile_obstacle_tile_location_013",
+            "tile_cell_tile_location_014",
+            "tile_cell_edge_tile_location_014",
+            "tile_target_tile_location_014",
+            "tile_obstacle_tile_location_014",
+            "tile_cell_region_002",
+            "tile_cell_edge_region_002",
+            "tile_target_region_002",
+            "tile_obstacle_region_002",
+            "env_atmo_location_012",
+            "env_atmo_location_013",
+            "env_atmo_location_014",
+            "env_depth_location_012_turn_rail",
+            "env_depth_location_012_frost_clock",
+            "env_depth_location_013_stone_corner",
+            "env_depth_location_013_shift_crate",
+            "env_depth_location_014_last_heap",
+            "env_depth_location_014_end_lamp",
+            "env_atmo_region_002",
+            "env_depth_region_002_upor",
+            "env_depth_region_002_plastina",
+            "parallax_world",
+            "entity_001",
+            "entity_002",
+            "entity_005"
+          ],
+          "locations_involved": [
+            "location_012",
+            "location_013",
+            "location_014"
+          ],
+          "factions_involved": [
+            "faction_005"
+          ],
+          "resources_involved": [],
+          "conflicts_involved": [],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_012",
+              "render_method": "engine_gradient",
+              "gradient_description": "Плавный градиент от #3f8fb8 к #1b2a3a без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_013",
+              "render_method": "engine_gradient",
+              "gradient_description": "Приглушённый градиент от #8a9aa8 к #1b2a3a без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_014",
+              "render_method": "engine_gradient",
+              "gradient_description": "Градиент от #1b2a3a к #9fd0e8 без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_region_002",
+              "render_method": "engine_gradient",
+              "gradient_description": "Плотный тёмно-синий градиент с редкими красноватыми отсветами, без различимых объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_012_turn_rail",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -90,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 1,
+              "col": 1
+            },
+            {
+              "entity_id": "env_depth_location_012_frost_clock",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -80,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 0,
+              "col": 6
+            },
+            {
+              "entity_id": "env_depth_location_013_stone_corner",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -80,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 6,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_location_013_shift_crate",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -90,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 6,
+              "col": 6
+            },
+            {
+              "entity_id": "env_depth_location_014_last_heap",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -90,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 0,
+              "col": 1
+            },
+            {
+              "entity_id": "env_depth_location_014_end_lamp",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 100,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 1,
+              "col": 6
+            },
+            {
+              "entity_id": "env_depth_region_002_upor",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -80,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 6,
+              "col": 3
+            },
+            {
+              "entity_id": "env_depth_region_002_plastina",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -90,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 3,
+              "col": 0
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 8,
+            "rows": 7,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_tile_location_013",
+              "T": "tile_target_tile_location_013",
+              "O": "tile_obstacle_tile_location_013",
+              "X": "empty"
+            },
+            "grid": [
+              "OOOOOOOO",
+              "OCCCCCCO",
+              "OCTCCTCO",
+              "OCCCCCCO",
+              "OCCOCCCO",
+              "OCTCCCCO",
+              "OOOOOOOO"
+            ]
+          },
+          "light_sources": [],
+          "micro_space": {
+            "description": "Тесный замерзший поворот с тремя целевыми карманами, центральным препятствием и внешним безопасным обходом; три ледяные посылки нужно провести мимо треснувшей внутренней дуги, сохранив горячий жетон.",
+            "structure_rule": "single core_board; three target pockets at row 2 col 2, row 2 col 5, row 5 col 2; central obstacle at row 4 col 3 creates a detour along the outer edge.",
+            "entry_point": "row 5 col 5",
+            "exit_point": "row 2 col 5",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_04_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "scattered",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 5,
+                    "col": 5
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 3,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 3,
+                    "col": 5
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 83,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 4
+                  }
+                ],
+                "zone_objective": "Push three entity_002 boxes onto the three tile_target_tile_location_013 cells while preserving one undo token."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 52,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "optional",
+      "density_mode": "sparse",
+      "scale_justification": "Макро задаёт поле 8x8 и 52 цикла взаимодействия; для одного участка выбран режим CONSTRAINT_SOLVE с лимитом ходов 63 и запасом 1.2.",
+      "zone_topology": "Одна core_board-зона: старт в левом верхнем углу, четыре ячейки, треснувшая клетка-ловушка и обход к финальной ячейке.",
+      "complexity_vector": "restrictive",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.2,
+      "min_goals": 4,
+      "density_percentage": 14,
+      "critical_action": "Толкать хрупкие посылки к ячейкам, не загоняя их в углы и не перекрывая обход трещины.",
+      "trap": "Повторный проход по треснувшей клетке создаёт обход и может закрыть последнюю ячейку.",
+      "planning_depth": 4,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 16,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "клетка row1 col1"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "центральный ледяной настил"
+          },
+          {
+            "id": "N3",
+            "role": "hazard_zone",
+            "spatial_unit": "треснувшая клетка row3 col3"
+          },
+          {
+            "id": "N4",
+            "role": "exit",
+            "spatial_unit": "ячейка row6 col5"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N3",
+            "type": "main"
+          },
+          {
+            "from": "N3",
+            "to": "N4",
+            "type": "main"
+          }
+        ],
+        "optional_zones": [
+          {
+            "node_id": "N2",
+            "reward": "resource_003"
+          }
+        ],
+        "distribution": {
+          "N1": [
+            "entity_001"
+          ],
+          "N2": [
+            "entity_004",
+            "resource_003"
+          ],
+          "N3": [
+            "conflict_004"
+          ],
+          "N4": [
+            "tile_target_tile_location_015"
+          ]
+        }
+      },
+      "self_check": "PASS"
+    },
+    "macro_level_id": "macro_level_05",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 1,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        52,
+        52
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "optional",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_015",
+      "tile_cell_edge_tile_location_015",
+      "tile_target_tile_location_015",
+      "tile_obstacle_tile_location_015",
+      "tile_cell_tile_location_016",
+      "tile_cell_edge_tile_location_016",
+      "tile_target_tile_location_016",
+      "tile_obstacle_tile_location_016",
+      "tile_cell_tile_location_017",
+      "tile_cell_edge_tile_location_017",
+      "tile_target_tile_location_017",
+      "tile_obstacle_tile_location_017",
+      "tile_cell_tile_location_018",
+      "tile_cell_edge_tile_location_018",
+      "tile_target_tile_location_018",
+      "tile_obstacle_tile_location_018",
+      "env_atmo_location_015",
+      "env_atmo_location_016",
+      "env_atmo_location_017",
+      "env_atmo_location_018",
+      "env_depth_location_015_first_crack",
+      "env_depth_location_015_crack_marker",
+      "env_depth_location_016_cracked_cell",
+      "env_depth_location_016_detour_post",
+      "env_depth_location_017_frost_crack",
+      "env_depth_location_018_ice_fork",
+      "parallax_world",
+      "entity_001",
+      "entity_004",
+      "resource_003",
+      "entity_008",
+      "entity_006",
+      "faction_003",
+      "conflict_004"
+    ],
+    "location_ids": [
+      "location_015",
+      "location_016",
+      "location_017",
+      "location_018"
+    ],
+    "region_ids": [],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_05_micro_01",
+          "sequence_index": 1,
+          "title": "Первая трещина",
+          "phase": "expansion",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 8,
+            "rows": 8,
+            "slots": 0
+          },
+          "spatial_extent": "8x8",
+          "start_point": {
+            "row": 1,
+            "col": 1
+          },
+          "goal_or_exit": {
+            "row": 6,
+            "col": 5,
+            "condition": "all_targets_covered"
+          },
+          "resource_limits": {
+            "move_limit": 63,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 2
+          },
+          "win_condition": "all_target_tiles_covered_by_pushables",
+          "solvability_constraints": "Четыре цели и четыре хрупкие посылки; треснувшая клетка требует обхода; скользкая посылка останавливается только у препятствия.",
+          "objective": "Скользкая посылка остановлена у ячейки, трещины обойдены.",
+          "objective_details": [
+            "Скользкая голубая посылка едет до препятствия: рассчитать толчок так, чтобы она остановилась у ячейки.",
+            "Использовать не более 2 горячих жетонов и сохранить хотя бы 1 до хрупкого настила.",
+            "Обойти треснувшую клетку после первого прохода, не закрыв коридор к финальной ячейке.",
+            "Оставить свободный коридор к ячейке row6 col5."
+          ],
+          "requirements": [
+            "Сохранить горячий жетон до хрупкого настила."
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo",
+            "restart"
+          ],
+          "completion_conditions": [
+            "micro_level_complete",
+            "conflict_004.status = 'active'",
+            "resource_003.available = true"
+          ],
+          "rewards": [
+            "resource_003"
+          ],
+          "unlocks": [],
+          "state_changes": [
+            "conflict_004.status = 'active'",
+            "resource_003.available = true"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "entity_001",
+            "entity_004",
+            "resource_003",
+            "tile_cell_tile_location_015",
+            "tile_cell_edge_tile_location_015",
+            "tile_target_tile_location_015",
+            "tile_obstacle_tile_location_015",
+            "entity_006",
+            "entity_008"
+          ],
+          "locations_involved": [
+            "location_015",
+            "location_016",
+            "location_017",
+            "location_018"
+          ],
+          "factions_involved": [
+            "faction_003"
+          ],
+          "resources_involved": [
+            "resource_003"
+          ],
+          "conflicts_involved": [
+            "conflict_004"
+          ],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_015",
+              "render_method": "engine_gradient",
+              "gradient_description": "Лёгкий градиент от #9fd0e8 к #1b2a3a без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_016",
+              "render_method": "engine_gradient",
+              "gradient_description": "Мерцающий градиент от #3f8fb8 к #8a9aa8 без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_017",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с мягким ледяным свечением, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_018",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с голубоватой дымкой, без объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_015_first_crack",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -40,
+              "has_collision": false,
+              "parallax_factor": 0.4,
+              "row": 0,
+              "col": 2
+            },
+            {
+              "entity_id": "env_depth_location_015_crack_marker",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -30,
+              "has_collision": false,
+              "parallax_factor": 0.2,
+              "row": 0,
+              "col": 3
+            },
+            {
+              "entity_id": "env_depth_location_016_cracked_cell",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -35,
+              "has_collision": false,
+              "parallax_factor": 0.4,
+              "row": 7,
+              "col": 5
+            },
+            {
+              "entity_id": "env_depth_location_016_detour_post",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -20,
+              "has_collision": false,
+              "parallax_factor": 0.2,
+              "row": 3,
+              "col": 1
+            },
+            {
+              "entity_id": "env_depth_location_017_frost_crack",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 10,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 6,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_location_018_ice_fork",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 12,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 0,
+              "col": 6
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 8,
+            "rows": 8,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_tile_location_015",
+              "E": "tile_cell_edge_tile_location_015",
+              "T": "tile_target_tile_location_015",
+              "O": "tile_obstacle_tile_location_015",
+              "X": "empty"
+            },
+            "grid": [
+              "OEOOOOOO",
+              "OCCCCTCO",
+              "OCCCCCTO",
+              "OCCOCCCO",
+              "OCCCCCCO",
+              "OTCCCCCO",
+              "OCCCCTCO",
+              "OOOOOOEO"
+            ]
+          },
+          "light_sources": [],
+          "micro_space": {
+            "description": "Восьмиклеточная ледяная доска с четырьмя ячейками, треснувшей клеткой и хрупкими посылками; обход трещины требует сохранить горячий жетон.",
+            "structure_rule": "Единая core_board-зона с линейным маршрутом от старта к четырём ячейкам через треснувшую клетку.",
+            "entry_point": "row1 col1",
+            "exit_point": "row6 col5",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_05_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "centered",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 1,
+                    "col": 1
+                  },
+                  {
+                    "entity_id": "entity_004",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 2,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "entity_004",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 3,
+                    "col": 4
+                  },
+                  {
+                    "entity_id": "entity_004",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 6
+                  },
+                  {
+                    "entity_id": "entity_004",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 5,
+                    "col": 5
+                  },
+                  {
+                    "entity_id": "resource_003",
+                    "instance_count": 92,
+                    "entity_category": "gameplay",
+                    "row": 1,
+                    "col": 3
+                  },
+                  {
+                    "entity_id": "resource_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 1,
+                    "col": 4
+                  },
+                  {
+                    "entity_id": "resource_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 2,
+                    "col": 4
+                  },
+                  {
+                    "entity_id": "resource_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 3,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "resource_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "resource_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 5
+                  },
+                  {
+                    "entity_id": "resource_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 6,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "resource_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 6,
+                    "col": 6
+                  }
+                ],
+                "zone_objective": "Разместить четыре хрупкие посылки на ячейках, обходя треснувшую клетку и не исчерпав горячие жетоны."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 56,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "optional",
+      "density_mode": "sparse",
+      "scale_justification": "Макро содержит один микроуровень 9x8 с 56 целевыми циклами взаимодействия, 4 ячейками и 4 посылками; поле соответствует диапазону CBG 40-60 для сеточных головоломок.",
+      "zone_topology": "Единая core_board зона с основным маршрутом через треснувший обход и опциональной веткой через ледяной шип.",
+      "complexity_vector": "combinatorial",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.2,
+      "min_goals": 4,
+      "density_percentage": 15,
+      "critical_action": "Толкать entity_004 к tile_target_region_003, не проходя повторно по треснувшим клеткам и не загоняя посылки в углы.",
+      "trap": "Правый нижний угол row5 col6 рядом с ячейкой row4 col7 заманивает посылку в тупик.",
+      "planning_depth": 7,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 16,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "row5 col4"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "центральный треснувший обход row4 col4"
+          },
+          {
+            "id": "N3",
+            "role": "branch",
+            "spatial_unit": "опциональная ледяная ветка row2 col5"
+          },
+          {
+            "id": "N4",
+            "role": "exit",
+            "spatial_unit": "row4 col7"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N1",
+            "to": "N3",
+            "type": "branch"
+          },
+          {
+            "from": "N3",
+            "to": "N2",
+            "type": "merge"
+          },
+          {
+            "from": "N2",
+            "to": "N4",
+            "type": "main"
+          }
+        ],
+        "optional_zones": [
+          {
+            "node_id": "N3",
+            "reward": "звёздная точность за обход без повторного прохода"
+          }
+        ],
+        "distribution": {
+          "N1": [
+            "entity_001"
+          ],
+          "N2": [
+            "entity_004"
+          ],
+          "N3": [
+            "entity_004"
+          ],
+          "N4": [
+            "tile_target_region_003"
+          ]
+        }
+      },
+      "self_check": "PASS"
+    },
+    "macro_level_id": "macro_level_06",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 6,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        45,
+        67
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "optional",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_019",
+      "tile_cell_edge_tile_location_019",
+      "tile_target_tile_location_019",
+      "tile_obstacle_tile_location_019",
+      "tile_cell_tile_location_020",
+      "tile_cell_edge_tile_location_020",
+      "tile_target_tile_location_020",
+      "tile_obstacle_tile_location_020",
+      "tile_cell_tile_location_021",
+      "tile_cell_edge_tile_location_021",
+      "tile_target_tile_location_021",
+      "tile_obstacle_tile_location_021",
+      "tile_cell_region_003",
+      "tile_cell_edge_region_003",
+      "tile_target_region_003",
+      "tile_obstacle_region_003",
+      "env_atmo_location_019",
+      "env_atmo_location_020",
+      "env_atmo_location_021",
+      "env_depth_location_019_chipped_edge",
+      "env_depth_location_020_ice_spike",
+      "env_depth_location_021_frozen_crack",
+      "env_atmo_region_003",
+      "env_depth_region_003_plita",
+      "env_depth_region_003_bortik",
+      "parallax_world",
+      "entity_001",
+      "entity_004",
+      "entity_008",
+      "entity_006",
+      "faction_003",
+      "faction_006",
+      "conflict_004"
+    ],
+    "location_ids": [
+      "location_019",
+      "location_020",
+      "location_021"
+    ],
+    "region_ids": [
+      "region_003"
+    ],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_06_micro_01",
+          "sequence_index": 0,
+          "title": "Замерзший обход",
+          "phase": "development",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 9,
+            "rows": 8,
+            "slots": 0
+          },
+          "spatial_extent": "9x8",
+          "start_point": {
+            "row": 5,
+            "col": 4
+          },
+          "goal_or_exit": {
+            "row": 4,
+            "col": 7,
+            "condition": "all entity_004 instances occupy tile_target_region_003 cells"
+          },
+          "resource_limits": {
+            "move_limit": 68,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 2
+          },
+          "win_condition": "all entity_004 pushable parcels are placed on tile_target_region_003 target cells",
+          "solvability_constraints": "Запрещено повторно проходить по треснувшим клеткам; посылки нельзя загонять в углы row0/row7/col0/col8; каждая entity_004 должна достичь отдельной tile_target_region_003.",
+          "objective": "Провести сортировщика по треснувшему обходу и разместить четыре посылки entity_004 в ячейки tile_target_region_003 без повторного прохода по трещинам.",
+          "objective_details": [
+            "Провести сортировщика entity_001 по треснувшему обходу.",
+            "Разместить четыре посылки entity_004 на четырёх ячейках tile_target_region_003.",
+            "Не расходовать больше двух горячих жетонов отогрева хода.",
+            "Не проходить повторно через треснувшие клетки, отмеченные obstacle_tile region_003.",
+            "Учесть скольжение посылки с голубой кромкой до препятствия."
+          ],
+          "requirements": [
+            "Ввести скользкую посылку и трещины.",
+            "conflict_004 должен быть активен.",
+            "faction_003 и faction_006 должны присутствовать на станции."
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo",
+            "restart"
+          ],
+          "completion_conditions": [
+            "micro_level_complete",
+            "entity_004.count_on(tile_target_region_003) = 4",
+            "Все ячейки обхода заняты без повторного прохода по трещинам."
+          ],
+          "rewards": [
+            "micro_phase_clear",
+            "star_rating",
+            "logic_shards"
+          ],
+          "unlocks": [
+            "mech_frozen_slide"
+          ],
+          "state_changes": [
+            "conflict_004.status = 'resolved'",
+            "faction_003.status = 'contained'",
+            "faction_006.status = 'satisfied'"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "tile_cell_tile_location_019",
+            "tile_cell_edge_tile_location_019",
+            "tile_target_tile_location_019",
+            "tile_obstacle_tile_location_019",
+            "tile_cell_tile_location_020",
+            "tile_cell_edge_tile_location_020",
+            "tile_target_tile_location_020",
+            "tile_obstacle_tile_location_020",
+            "tile_cell_tile_location_021",
+            "tile_cell_edge_tile_location_021",
+            "tile_target_tile_location_021",
+            "tile_obstacle_tile_location_021",
+            "tile_cell_region_003",
+            "tile_cell_edge_region_003",
+            "tile_target_region_003",
+            "tile_obstacle_region_003",
+            "env_atmo_location_019",
+            "env_atmo_location_020",
+            "env_atmo_location_021",
+            "env_depth_location_019_chipped_edge",
+            "env_depth_location_020_ice_spike",
+            "env_depth_location_021_frozen_crack",
+            "env_atmo_region_003",
+            "env_depth_region_003_plita",
+            "env_depth_region_003_bortik",
+            "parallax_world",
+            "entity_001",
+            "entity_004",
+            "entity_008",
+            "entity_006",
+            "faction_003",
+            "faction_006",
+            "conflict_004"
+          ],
+          "locations_involved": [
+            "location_019",
+            "location_020",
+            "location_021"
+          ],
+          "factions_involved": [
+            "faction_003",
+            "faction_006"
+          ],
+          "resources_involved": [],
+          "conflicts_involved": [
+            "conflict_004"
+          ],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_019",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с лёгким оранжевым отсветом у нижнего края."
+            },
+            {
+              "entity_id": "env_atmo_location_020",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с усиленным холодным свечением."
+            },
+            {
+              "entity_id": "env_atmo_location_021",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с плотной морозной дымкой."
+            },
+            {
+              "entity_id": "env_atmo_region_003",
+              "render_method": "engine_gradient",
+              "gradient_description": "Бледно-голубой градиент с тонкими белесыми прожилками свечения."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_019_chipped_edge",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -60,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 1,
+              "col": 1
+            },
+            {
+              "entity_id": "env_depth_location_020_ice_spike",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -55,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 2,
+              "col": 2
+            },
+            {
+              "entity_id": "env_depth_location_021_frozen_crack",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -40,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 6,
+              "col": 6
+            },
+            {
+              "entity_id": "env_depth_region_003_plita",
+              "instance_count": 2,
+              "render_layer": "background_near",
+              "z_index": -35,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 3,
+              "col": 3
+            },
+            {
+              "entity_id": "env_depth_region_003_bortik",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 10,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 7,
+              "col": 7
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 9,
+            "rows": 8,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_region_003",
+              "E": "tile_cell_edge_region_003",
+              "T": "tile_target_region_003",
+              "O": "tile_obstacle_region_003",
+              "X": "empty"
+            },
+            "grid": [
+              "OOOOOOOOO",
+              "OECCCCCEO",
+              "OCOCCTOCO",
+              "OCCCTCCCO",
+              "OCTCCCCTO",
+              "OECCCCCEO",
+              "OCOCCOCCO",
+              "OOOOOOOOO"
+            ]
+          },
+          "surface_layout": [],
+          "light_sources": [],
+          "micro_space": {
+            "description": "Один компактный сортировочный обход 9x8, окружённый замерзшими перегородками, с четырьмя ячейками и треснувшим центральным маршрутом.",
+            "structure_rule": "Единая core_board зона; основной маршрут идёт от стартовой клетки row5 col4 через треснувший центр к правой ячейке row4 col7, опциональная ветка проходит через row2 col5.",
+            "entry_point": "row5 col4",
+            "exit_point": "row4 col7",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_06_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "centered",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 5,
+                    "col": 4
+                  },
+                  {
+                    "entity_id": "entity_004",
+                    "instance_count": 108,
+                    "entity_category": "gameplay",
+                    "row": 1,
+                    "col": 3
+                  },
+                  {
+                    "entity_id": "entity_004",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 2,
+                    "col": 3
+                  },
+                  {
+                    "entity_id": "entity_004",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 5,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "entity_004",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 5,
+                    "col": 6
+                  }
+                ],
+                "zone_objective": "Разместить все четыре посылки entity_004 на ячейках tile_target_region_003, обходя треснувшие клетки и не создавая тупик у row5 col6."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 54,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "no",
+      "density_mode": "sparse",
+      "scale_justification": "Макро содержит ровно одну микро-фазу по micro_phases_blueprint; поле 9x9 соответствует difficulty_metrics.field_size 9x9 и целевому ЦБГ 54 при move_limit 72.",
+      "zone_topology": "Одна core_board зона 9x9: узкий горизонтальный жёлоб от старта к ячейкам, с упором у края поля.",
+      "complexity_vector": "variety",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.333,
+      "min_goals": 5,
+      "density_percentage": 16,
+      "critical_action": "Рассчитать длинное скольжение entity_003 по жёлобу до упора так, чтобы посылка остановилась на ячейке и не перекрыла единственный проход.",
+      "trap": "Лишний разгон или ранний толчок перекрывает узкий жёлоб и делает маршрут к ячейкам неразрешимым.",
+      "planning_depth": 4,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 16,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "row 4 col 1"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "row 4 cols 2-5 narrow chute"
+          },
+          {
+            "id": "N3",
+            "role": "exit",
+            "spatial_unit": "row 4 cols 6-8 target stops"
+          },
+          {
+            "id": "N4",
+            "role": "optional",
+            "spatial_unit": "row 4 col 5 visual glide cue"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N3",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N4",
+            "type": "optional"
+          }
+        ],
+        "optional_zones": [
+          {
+            "node_id": "N4",
+            "reward": "visual cue for glide distance, no blocking reward"
+          }
+        ],
+        "distribution": {
+          "N1": [
+            "entity_001"
+          ],
+          "N2": [
+            "entity_003"
+          ],
+          "N3": [
+            "tile_target_tile_location_022",
+            "tile_target_tile_location_023",
+            "tile_target_tile_location_024"
+          ],
+          "N4": [
+            "env_depth_location_025_glide_parcel"
+          ]
+        }
+      },
+      "self_check": "PASS; single-micro package uses one core_board, all legend tile IDs duplicated in entities_involved, all macro entity_ids listed verbatim."
+    },
+    "macro_level_id": "macro_level_07",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 1,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        54,
+        72
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "no",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_022",
+      "tile_cell_edge_tile_location_022",
+      "tile_target_tile_location_022",
+      "tile_obstacle_tile_location_022",
+      "tile_cell_tile_location_023",
+      "tile_cell_edge_tile_location_023",
+      "tile_target_tile_location_023",
+      "tile_obstacle_tile_location_023",
+      "tile_cell_tile_location_024",
+      "tile_cell_edge_tile_location_024",
+      "tile_target_tile_location_024",
+      "tile_obstacle_tile_location_024",
+      "tile_cell_tile_location_025",
+      "tile_cell_edge_tile_location_025",
+      "tile_target_tile_location_025",
+      "tile_obstacle_tile_location_025",
+      "env_atmo_location_022",
+      "env_atmo_location_023",
+      "env_atmo_location_024",
+      "env_atmo_location_025",
+      "env_depth_location_022_blue_chute",
+      "env_depth_location_023_polished_lane",
+      "env_depth_location_024_wall_stop",
+      "env_depth_location_025_glide_parcel",
+      "parallax_world",
+      "entity_001",
+      "entity_003",
+      "entity_005",
+      "faction_002",
+      "conflict_005"
+    ],
+    "location_ids": [
+      "location_022",
+      "location_023",
+      "location_024",
+      "location_025"
+    ],
+    "region_ids": [],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_07_micro_01",
+          "sequence_index": 1,
+          "title": "Голубой жёлоб",
+          "phase": "challenge",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 9,
+            "rows": 9,
+            "slots": 0
+          },
+          "spatial_extent": "9x9",
+          "start_point": {
+            "row": 4,
+            "col": 1
+          },
+          "goal_or_exit": {
+            "row": 4,
+            "col": 8,
+            "condition": "all sliding parcels stopped on target cells"
+          },
+          "resource_limits": {
+            "move_limit": 72,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 2
+          },
+          "win_condition": "All sliding parcels are stopped on target cells without blocking the sole corridor.",
+          "solvability_constraints": "Long slide must terminate at a target or wall stop; no push may enter a dead-end corner or seal the only passage.",
+          "objective": "clear_all_goals",
+          "objective_details": [
+            "Plan long slide of entity_003 through the narrow corridor",
+            "Stop entity_003 exactly on a target cell using the wall stop",
+            "Keep the sole passage unblocked until all targets are covered",
+            "Thin ice cells crack after the first push; avoid repeated crossing"
+          ],
+          "requirements": [
+            "Закрыть macro_level_06 без повторного прохода по трещинам и с сохранённым горячим жетоном."
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo"
+          ],
+          "completion_conditions": [
+            "entity_003.grid_cell = target",
+            "all target cells covered",
+            "Скользкие посылки остановлены у ячеек, маршрут разгона рассчитан.",
+            "micro_level_complete"
+          ],
+          "rewards": [
+            "logic_shards",
+            "star_rating"
+          ],
+          "unlocks": [
+            "trigger_macro_level_07_exit"
+          ],
+          "state_changes": [
+            "entity_003.status = 'on_target'",
+            "conflict_005.resolved = true"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "tile_cell_tile_location_022",
+            "tile_cell_edge_tile_location_022",
+            "tile_target_tile_location_022",
+            "tile_obstacle_tile_location_022",
+            "tile_cell_tile_location_023",
+            "tile_cell_edge_tile_location_023",
+            "tile_target_tile_location_023",
+            "tile_obstacle_tile_location_023",
+            "tile_cell_tile_location_024",
+            "tile_cell_edge_tile_location_024",
+            "tile_target_tile_location_024",
+            "tile_obstacle_tile_location_024",
+            "tile_cell_tile_location_025",
+            "tile_cell_edge_tile_location_025",
+            "tile_target_tile_location_025",
+            "tile_obstacle_tile_location_025",
+            "env_atmo_location_022",
+            "env_atmo_location_023",
+            "env_atmo_location_024",
+            "env_atmo_location_025",
+            "env_depth_location_022_blue_chute",
+            "env_depth_location_023_polished_lane",
+            "env_depth_location_024_wall_stop",
+            "env_depth_location_025_glide_parcel",
+            "parallax_world",
+            "entity_001",
+            "entity_003",
+            "entity_005",
+            "faction_002",
+            "conflict_005"
+          ],
+          "locations_involved": [
+            "location_022",
+            "location_023",
+            "location_024",
+            "location_025"
+          ],
+          "factions_involved": [
+            "faction_002"
+          ],
+          "resources_involved": [],
+          "conflicts_involved": [
+            "conflict_005"
+          ],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_022",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с голубым свечением в центре, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_023",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с ровной голубой полосой свечения, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_024",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с тёмной полосой у правого края, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_025",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с голубым и оранжевым отсветом, без объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_022_blue_chute",
+              "instance_count": 2,
+              "render_layer": "background_mid",
+              "z_index": -80,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 0,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_location_023_polished_lane",
+              "instance_count": 2,
+              "render_layer": "background_near",
+              "z_index": -70,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 0,
+              "col": 2
+            },
+            {
+              "entity_id": "env_depth_location_024_wall_stop",
+              "instance_count": 2,
+              "render_layer": "background_near",
+              "z_index": -60,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 0,
+              "col": 4
+            },
+            {
+              "entity_id": "env_depth_location_025_glide_parcel",
+              "instance_count": 2,
+              "render_layer": "foreground",
+              "z_index": 10,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 0,
+              "col": 6
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 9,
+            "rows": 9,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_tile_location_022",
+              "E": "tile_cell_edge_tile_location_022",
+              "T": "tile_target_tile_location_022",
+              "O": "tile_obstacle_tile_location_022",
+              "D": "tile_cell_tile_location_022",
+              "F": "tile_cell_edge_tile_location_022",
+              "G": "tile_target_tile_location_022",
+              "H": "tile_obstacle_tile_location_022",
+              "I": "tile_cell_tile_location_022",
+              "J": "tile_cell_edge_tile_location_022",
+              "K": "tile_target_tile_location_022",
+              "L": "tile_obstacle_tile_location_022",
+              "M": "tile_cell_tile_location_022",
+              "N": "tile_cell_edge_tile_location_022",
+              "P": "tile_target_tile_location_022",
+              "Q": "tile_obstacle_tile_location_022",
+              "X": "empty"
+            },
+            "grid": [
+              "OOOOOOOOO",
+              "OOOOOOOOO",
+              "OOOOOOOOO",
+              "OOOOOOOOO",
+              "OCCCTTTTT",
+              "OOOOOOOOO",
+              "OOOOOOOOO",
+              "OOOOOOOOO",
+              "OOOOOOOOO"
+            ]
+          },
+          "surface_layout": [],
+          "light_sources": [],
+          "micro_space": {
+            "description": "Узкий голубой жёлоб с единственным проходом по центру; старт слева, три ячейки у правого упора, длинное скольжение посылки до края поля.",
+            "structure_rule": "single 9x9 core_board with one narrow horizontal chute and no alternate route",
+            "entry_point": "row 4 col 1",
+            "exit_point": "row 4 col 8",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_07_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "centered",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 1
+                  },
+                  {
+                    "entity_id": "entity_003",
+                    "instance_count": 99,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 2
+                  }
+                ],
+                "zone_objective": "Push entity_003 along the narrow chute so it stops on a target cell without blocking the sole passage."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 64,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "no",
+      "density_mode": "sparse",
+      "scale_justification": "9x10 grid matches CBG 64 and move_limit 77; five target tiles satisfy min_goals=5; sparse decorative density matches blueprint requirement of 6-10 props.",
+      "zone_topology": "Single core_board zone with start at lower center, five target cells, obstacle pinch points and blocked cells behind the ice stop.",
+      "complexity_vector": "spatial",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.203,
+      "min_goals": 6,
+      "density_percentage": 17,
+      "critical_action": "align the blue slippery parcel with the ice stop so it lands exactly on a target tile",
+      "trap": "overshooting past a target into blocked cells behind the ice stop",
+      "planning_depth": 4,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 16,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "lower center floor at row 8 col 4"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "open central sorting lanes"
+          },
+          {
+            "id": "N3",
+            "role": "goal",
+            "spatial_unit": "five target tiles distributed across the grid"
+          },
+          {
+            "id": "N4",
+            "role": "hazard_zone",
+            "spatial_unit": "blocked cells and obstacle pinch points behind the ice stop"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N3",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N4",
+            "type": "branch"
+          }
+        ],
+        "optional_zones": [
+          {
+            "node_id": "N3",
+            "reward": "all five target tiles covered"
+          }
+        ],
+        "distribution": {
+          "N1": [
+            "entity_001"
+          ],
+          "N2": [
+            "entity_003"
+          ],
+          "N3": [
+            "tile_target_tile_location_026"
+          ],
+          "N4": [
+            "tile_obstacle_tile_location_026"
+          ]
+        }
+      },
+      "self_check": "PASS"
+    },
+    "macro_level_id": "macro_level_08",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 10,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        60,
+        120
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "no",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_026",
+      "tile_cell_edge_tile_location_026",
+      "tile_target_tile_location_026",
+      "tile_obstacle_tile_location_026",
+      "tile_cell_tile_location_027",
+      "tile_cell_edge_tile_location_027",
+      "tile_target_tile_location_027",
+      "tile_obstacle_tile_location_027",
+      "tile_cell_tile_location_028",
+      "tile_cell_edge_tile_location_028",
+      "tile_target_tile_location_028",
+      "tile_obstacle_tile_location_028",
+      "tile_cell_region_004",
+      "tile_cell_edge_region_004",
+      "tile_target_region_004",
+      "tile_obstacle_region_004",
+      "env_atmo_location_026",
+      "env_atmo_location_027",
+      "env_atmo_location_028",
+      "env_depth_location_026_slanted_ramp",
+      "env_depth_location_027_rhythm_ridge",
+      "env_depth_location_028_ice_stop",
+      "env_atmo_region_004",
+      "env_depth_region_004_zhelob",
+      "env_depth_region_004_napravlyayushchaya",
+      "parallax_world",
+      "entity_001",
+      "entity_003",
+      "entity_006",
+      "faction_002",
+      "conflict_008"
+    ],
+    "location_ids": [
+      "location_026",
+      "location_027",
+      "location_028"
+    ],
+    "region_ids": [
+      "region_004"
+    ],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_08_micro_01",
+          "sequence_index": 1,
+          "title": "Наклонный скат",
+          "phase": "expansion",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 9,
+            "rows": 10,
+            "slots": 0
+          },
+          "spatial_extent": "9x10",
+          "start_point": {
+            "row": 8,
+            "col": 4
+          },
+          "goal_or_exit": {
+            "row": 7,
+            "col": 4,
+            "condition": "all_target_tiles_covered"
+          },
+          "resource_limits": {
+            "move_limit": 99,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 3
+          },
+          "win_condition": "all_target_tiles_covered",
+          "solvability_constraints": "Five pushable parcels must occupy five distinct target tiles; obstacle cells and edge cells cannot be entered; undo_limit=3.",
+          "objective": "clear_all_goals",
+          "objective_details": [
+            "Push five blue slippery parcels across the slanted grid.",
+            "Use the ice stop to halt long slides on target tiles.",
+            "Prevent overshoot into blocked cells behind the ice stop.",
+            "Spend at most three undo tokens."
+          ],
+          "requirements": [
+            "Рассчитать длинное скольжение на голубом жёлобе."
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo"
+          ],
+          "completion_conditions": [
+            "all_target_tiles_covered",
+            "Посылки остановлены у ячеек, перелёт предотвращён.",
+            "micro_level_complete"
+          ],
+          "rewards": [
+            "micro_phase_complete"
+          ],
+          "unlocks": [
+            "macro_level_08_exit"
+          ],
+          "state_changes": [
+            "conflict_008.status = 'resolved'",
+            "entity_003.status = 'placed'"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "entity_001",
+            "entity_003",
+            "tile_cell_tile_location_026",
+            "tile_cell_edge_tile_location_026",
+            "tile_target_tile_location_026",
+            "tile_obstacle_tile_location_026",
+            "env_atmo_location_026",
+            "parallax_world",
+            "env_depth_location_026_slanted_ramp",
+            "env_depth_location_027_rhythm_ridge",
+            "env_depth_location_028_ice_stop",
+            "env_depth_region_004_zhelob",
+            "env_depth_region_004_napravlyayushchaya",
+            "entity_006"
+          ],
+          "locations_involved": [
+            "location_026",
+            "location_027",
+            "location_028"
+          ],
+          "factions_involved": [
+            "faction_002"
+          ],
+          "resources_involved": [],
+          "conflicts_involved": [
+            "conflict_008"
+          ],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_026",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с диагональным голубым свечением, без объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_026_slanted_ramp",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -40,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 0,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_location_027_rhythm_ridge",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -39,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 0,
+              "col": 8
+            },
+            {
+              "entity_id": "env_depth_location_028_ice_stop",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -20,
+              "has_collision": false,
+              "parallax_factor": 0.8,
+              "row": 9,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_region_004_zhelob",
+              "instance_count": 2,
+              "render_layer": "background_near",
+              "z_index": -19,
+              "has_collision": false,
+              "parallax_factor": 0.8,
+              "row": 9,
+              "col": 8
+            },
+            {
+              "entity_id": "env_depth_region_004_napravlyayushchaya",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 50,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 5,
+              "col": 0
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 9,
+            "rows": 10,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_tile_location_026",
+              "E": "tile_cell_edge_tile_location_026",
+              "T": "tile_target_tile_location_026",
+              "O": "tile_obstacle_tile_location_026",
+              "X": "empty"
+            },
+            "grid": [
+              "EEEEEEEEE",
+              "ECCCCCCCE",
+              "ECTCCCTCE",
+              "ECCOCOCCE",
+              "ECCCCCCCE",
+              "ECTCCCTCE",
+              "ECOTCCOCE",
+              "ECCCTCCCE",
+              "EOCCCCCOE",
+              "EEEEEEEEE"
+            ]
+          },
+          "light_sources": [],
+          "micro_space": {
+            "description": "A sparse slanted sorting grid with a lower-center entry, five target cells, and obstacle pinch points that punish overshoot behind the ice stop.",
+            "structure_rule": "single core_board zone; start at lower center; targets distributed across upper, middle and lower bands; obstacles form a narrow slanted lane.",
+            "entry_point": "row 8 col 4",
+            "exit_point": "all five target tiles covered",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_08_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "scattered",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 8,
+                    "col": 4
+                  },
+                  {
+                    "entity_id": "entity_003",
+                    "instance_count": 123,
+                    "entity_category": "gameplay",
+                    "row": 1,
+                    "col": 1
+                  },
+                  {
+                    "entity_id": "entity_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 1,
+                    "col": 7
+                  },
+                  {
+                    "entity_id": "entity_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 1
+                  },
+                  {
+                    "entity_id": "entity_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 4,
+                    "col": 7
+                  },
+                  {
+                    "entity_id": "entity_003",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 6,
+                    "col": 4
+                  }
+                ],
+                "zone_objective": "Push all five blue slippery parcels onto the five target tiles without overshooting into blocked cells."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 68,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "optional",
+      "density_mode": "sparse",
+      "scale_justification": "Macro-level difficulty_metrics fixes a 10x10 board, 82 move limit, and 68 target interaction cycles. The macro declares no branching and a restrictive corridor, so the micro uses one core_board grid with five targets and five parcels.",
+      "zone_topology": "single core_board 10x10 grid with tight corridors; no alternate route because macro has_branching=false and the core challenge is restrictive push discipline.",
+      "complexity_vector": "restrictive",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.2059,
+      "min_goals": 5,
+      "density_percentage": 18,
+      "critical_action": "push each parcel through the narrow corridor without sealing the sole passage to a target cell",
+      "trap": "pushing a parcel into the dead-end corner blocks the corridor and can force an undo or restart",
+      "planning_depth": 5,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 16,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "entry tile row 1 col 1"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "central restrictive corridor rows 2-8"
+          },
+          {
+            "id": "N3",
+            "role": "reward_zone",
+            "spatial_unit": "five target cells embedded in the corridor"
+          },
+          {
+            "id": "N4",
+            "role": "exit",
+            "spatial_unit": "all target tiles occupied and corridor open"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N3",
+            "type": "main"
+          },
+          {
+            "from": "N3",
+            "to": "N4",
+            "type": "main"
+          }
+        ],
+        "optional_zones": [],
+        "distribution": {
+          "N1": [
+            "entity_001"
+          ],
+          "N2": [
+            "entity_002"
+          ],
+          "N3": [
+            "tile_target_tile_location_029"
+          ],
+          "N4": []
+        }
+      },
+      "self_check": "PASS: single core_board zone; all listed IDs present in entities_involved; tile legend uses location_029 surface IDs; decorative count 8 >= 6; logic-only faction_005 and conflict_007 reflected in state_changes."
+    },
+    "macro_level_id": "macro_level_09",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 12,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        60,
+        80
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "optional",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_029",
+      "tile_cell_edge_tile_location_029",
+      "tile_target_tile_location_029",
+      "tile_obstacle_tile_location_029",
+      "tile_cell_tile_location_030",
+      "tile_cell_edge_tile_location_030",
+      "tile_target_tile_location_030",
+      "tile_obstacle_tile_location_030",
+      "tile_cell_tile_location_031",
+      "tile_cell_edge_tile_location_031",
+      "tile_target_tile_location_031",
+      "tile_obstacle_tile_location_031",
+      "tile_cell_tile_location_032",
+      "tile_cell_edge_tile_location_032",
+      "tile_target_tile_location_032",
+      "tile_obstacle_tile_location_032",
+      "env_atmo_location_029",
+      "env_atmo_location_030",
+      "env_atmo_location_031",
+      "env_atmo_location_032",
+      "env_depth_location_029_matte_partition",
+      "env_depth_location_030_frosted_partition",
+      "env_depth_location_031_stone_threshold",
+      "env_depth_location_032_brass_cell",
+      "parallax_world",
+      "entity_001",
+      "entity_002",
+      "entity_005",
+      "faction_005",
+      "conflict_007"
+    ],
+    "location_ids": [
+      "location_029",
+      "location_030",
+      "location_031",
+      "location_032"
+    ],
+    "region_ids": [],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_09_micro_01",
+          "sequence_index": 0,
+          "title": "Тесные перегородки: сдавленный коридор",
+          "phase": "challenge",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 10,
+            "rows": 10,
+            "slots": 0
+          },
+          "spatial_extent": "10x10",
+          "start_point": {
+            "row": 1,
+            "col": 1
+          },
+          "goal_or_exit": {
+            "row": 8,
+            "col": 8,
+            "condition": "all target tiles occupied and corridor open"
+          },
+          "resource_limits": {
+            "move_limit": 82,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 3
+          },
+          "win_condition": "all PushableTag entities occupy GoalTag cells",
+          "solvability_constraints": "Only legal grid moves; parcels cannot be pushed into dead corners or block the sole corridor; undo is limited to 3; move limit is 82.",
+          "objective": "clear_all_goals",
+          "objective_details": [
+            "Push five orange parcels into five target cells.",
+            "Keep the single narrow corridor open at all times.",
+            "Use no more than 82 moves and 3 undo tokens.",
+            "Resolve the compressed passage conflict without trapping any parcel."
+          ],
+          "requirements": [
+            "Пройти macro_level_08 с не более чем одним откатом и остановить обе скользкие посылки у ячеек.",
+            "move_limit = 82",
+            "undo_limit = 3"
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo",
+            "restart"
+          ],
+          "completion_conditions": [
+            "micro_level_complete",
+            "trigger_macro_level_09_micro_01_exit",
+            "all_target_tiles_occupied = true",
+            "narrow_corridors_passed = true",
+            "corridor_open = true"
+          ],
+          "rewards": [
+            "logic_shards",
+            "star_rating"
+          ],
+          "unlocks": [],
+          "state_changes": [
+            "faction_005.status = 'cleared'",
+            "conflict_007.status = 'resolved'",
+            "macro_level_09.status = 'completed'"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "tile_cell_tile_location_029",
+            "tile_cell_edge_tile_location_029",
+            "tile_target_tile_location_029",
+            "tile_obstacle_tile_location_029",
+            "tile_cell_tile_location_030",
+            "tile_cell_edge_tile_location_030",
+            "tile_target_tile_location_030",
+            "tile_obstacle_tile_location_030",
+            "tile_cell_tile_location_031",
+            "tile_cell_edge_tile_location_031",
+            "tile_target_tile_location_031",
+            "tile_obstacle_tile_location_031",
+            "tile_cell_tile_location_032",
+            "tile_cell_edge_tile_location_032",
+            "tile_target_tile_location_032",
+            "tile_obstacle_tile_location_032",
+            "env_atmo_location_029",
+            "env_atmo_location_030",
+            "env_atmo_location_031",
+            "env_atmo_location_032",
+            "env_depth_location_029_matte_partition",
+            "env_depth_location_030_frosted_partition",
+            "env_depth_location_031_stone_threshold",
+            "env_depth_location_032_brass_cell",
+            "parallax_world",
+            "entity_001",
+            "entity_002",
+            "entity_005",
+            "faction_005",
+            "conflict_007"
+          ],
+          "locations_involved": [
+            "location_029",
+            "location_030",
+            "location_031",
+            "location_032"
+          ],
+          "factions_involved": [
+            "faction_005"
+          ],
+          "resources_involved": [],
+          "conflicts_involved": [
+            "conflict_007"
+          ],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_029",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с узкой светлой полосой в центре, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_030",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с повторяющимися вертикальными тенями, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_031",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с плотной тенью по краям, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_032",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с тёплым оранжевым ядром в центре, без объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_029_matte_partition",
+              "instance_count": 2,
+              "render_layer": "background_mid",
+              "z_index": -45,
+              "has_collision": false,
+              "parallax_factor": 0.4,
+              "row": 0,
+              "col": 2
+            },
+            {
+              "entity_id": "env_depth_location_030_frosted_partition",
+              "instance_count": 2,
+              "render_layer": "background_mid",
+              "z_index": -44,
+              "has_collision": false,
+              "parallax_factor": 0.35,
+              "row": 0,
+              "col": 5
+            },
+            {
+              "entity_id": "env_depth_location_031_stone_threshold",
+              "instance_count": 2,
+              "render_layer": "background_near",
+              "z_index": -20,
+              "has_collision": false,
+              "parallax_factor": 0.2,
+              "row": 9,
+              "col": 4
+            },
+            {
+              "entity_id": "env_depth_location_032_brass_cell",
+              "instance_count": 2,
+              "render_layer": "foreground",
+              "z_index": 60,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 5,
+              "col": 5
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 10,
+            "rows": 10,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_tile_location_029",
+              "E": "tile_cell_edge_tile_location_029",
+              "T": "tile_target_tile_location_029",
+              "O": "tile_obstacle_tile_location_029",
+              "X": "empty"
+            },
+            "grid": [
+              "OOOOOOOOOO",
+              "OEEEEEEEEO",
+              "OECCCCCCEO",
+              "OECCTCCCEO",
+              "OECCCCTCEO",
+              "OECCCTCCEO",
+              "OECCTCCCEO",
+              "OECCCCTCEO",
+              "OECCCCCCEO",
+              "OOOOOOOOOO"
+            ]
+          },
+          "light_sources": [],
+          "micro_space": {
+            "description": "A compact 10x10 frozen sorting board where matte partitions squeeze the player and five orange parcels into a single restrictive corridor with embedded target cells.",
+            "structure_rule": "One core_board grid; main route is the central corridor; no branching; five target cells are embedded along the corridor.",
+            "entry_point": "row 1, col 1",
+            "exit_point": "all five target tiles occupied with the corridor still passable",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_09_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "centered",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 1,
+                    "col": 1
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 131,
+                    "entity_category": "gameplay",
+                    "row": 2,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 2,
+                    "col": 7
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 5,
+                    "col": 3
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 6,
+                    "col": 7
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 8,
+                    "col": 2
+                  }
+                ],
+                "zone_objective": "Push all five orange parcels into target cells while keeping the narrow corridor open and using undo sparingly."
+              }
+            ]
+          },
+          "encounter_budget": {
+            "total_interactions": 6
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 64,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "optional",
+      "density_mode": "sparse",
+      "scale_justification": "10x11 field matches CBG 64; 4 target cells; move limit 87 is 1.36x CBG; sparse density at 19% fill; single standalone micro from blueprint.",
+      "zone_topology": "One core_board zone; linear dead-end corridor with central approach, partition obstacle cluster, target pockets and one dead-end trap; no branching.",
+      "complexity_vector": "combinatorial",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.36,
+      "min_goals": 4,
+      "density_percentage": 19,
+      "critical_action": "push_parcel_into_target_then_undo_after_second_target_if_corridor_blocks",
+      "trap": "corner_deadlock_at_partition_end",
+      "planning_depth": 5,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 12,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "central approach row 5 col 5"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "corridor row 5-9 col 4"
+          },
+          {
+            "id": "N3",
+            "role": "hazard_zone",
+            "spatial_unit": "partition corner rows 2-3 col 3"
+          },
+          {
+            "id": "N4",
+            "role": "reward_zone",
+            "spatial_unit": "target pocket rows 8-9 col 3-5"
+          },
+          {
+            "id": "N5",
+            "role": "exit",
+            "spatial_unit": "target cell row 9 col 5"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N3",
+            "type": "hazard"
+          },
+          {
+            "from": "N2",
+            "to": "N4",
+            "type": "main"
+          },
+          {
+            "from": "N4",
+            "to": "N5",
+            "type": "exit"
+          }
+        ],
+        "optional_zones": [],
+        "distribution": {
+          "N1": [
+            "entity_001"
+          ],
+          "N2": [
+            "tile_cell_region_005",
+            "tile_cell_edge_region_005"
+          ],
+          "N3": [
+            "tile_obstacle_region_005"
+          ],
+          "N4": [
+            "tile_target_region_005"
+          ],
+          "N5": [
+            "tile_target_region_005"
+          ]
+        }
+      },
+      "self_check": "PASS"
+    },
+    "macro_level_id": "macro_level_10",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 12,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        60,
+        120
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "optional",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_033",
+      "tile_cell_edge_tile_location_033",
+      "tile_target_tile_location_033",
+      "tile_obstacle_tile_location_033",
+      "tile_cell_tile_location_034",
+      "tile_cell_edge_tile_location_034",
+      "tile_target_tile_location_034",
+      "tile_obstacle_tile_location_034",
+      "tile_cell_region_005",
+      "tile_cell_edge_region_005",
+      "tile_target_region_005",
+      "tile_obstacle_region_005",
+      "env_atmo_location_033",
+      "env_atmo_location_034",
+      "env_depth_location_033_frozen_partition",
+      "env_depth_location_034_partition_end",
+      "env_atmo_region_005",
+      "env_depth_region_005_peregorodka",
+      "env_depth_region_005_proem",
+      "parallax_world",
+      "entity_001",
+      "entity_005",
+      "entity_006",
+      "faction_005"
+    ],
+    "location_ids": [
+      "location_033",
+      "location_034"
+    ],
+    "region_ids": [
+      "region_005"
+    ],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_10_micro_01",
+          "sequence_index": 0,
+          "title": "Перегородочный тупик: точный откат",
+          "phase": "development",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 10,
+            "rows": 11,
+            "slots": 0
+          },
+          "spatial_extent": "10x11",
+          "start_point": {
+            "row": 5,
+            "col": 5
+          },
+          "goal_or_exit": {
+            "row": 9,
+            "col": 5,
+            "condition": "clear_all_goals"
+          },
+          "resource_limits": {
+            "move_limit": 108,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 3
+          },
+          "win_condition": "clear_all_goals",
+          "solvability_constraints": "Dead-end corridor must be solved with exact undo use after both target cells are occupied; solution verified by reverse-push BFS.",
+          "objective": "Перегородочный тупик разобран, обе ячейки заняты.",
+          "objective_details": [
+            "Найти порядок толчков в тупике и использовать откат только там, где он меняет решение.",
+            "unlock_conditions: Пройти узкие коридоры без блокировки прохода.",
+            "exit_conditions: Перегородочный тупик разобран, обе ячейки заняты."
+          ],
+          "requirements": [
+            "Пройти узкие коридоры без блокировки прохода."
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo",
+            "restart"
+          ],
+          "completion_conditions": [
+            "micro_level_complete",
+            "faction_005.status = 'resolved'"
+          ],
+          "rewards": [
+            "micro_level_complete"
+          ],
+          "unlocks": [
+            "exit_conditions_met"
+          ],
+          "state_changes": [
+            "entity_001.gridPos = (5,5)",
+            "faction_005.status = 'resolved'"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "tile_cell_tile_location_033",
+            "tile_cell_edge_tile_location_033",
+            "tile_target_tile_location_033",
+            "tile_obstacle_tile_location_033",
+            "tile_cell_tile_location_034",
+            "tile_cell_edge_tile_location_034",
+            "tile_target_tile_location_034",
+            "tile_obstacle_tile_location_034",
+            "tile_cell_region_005",
+            "tile_cell_edge_region_005",
+            "tile_target_region_005",
+            "tile_obstacle_region_005",
+            "env_atmo_location_033",
+            "env_atmo_location_034",
+            "env_depth_location_033_frozen_partition",
+            "env_depth_location_034_partition_end",
+            "env_atmo_region_005",
+            "env_depth_region_005_peregorodka",
+            "env_depth_region_005_proem",
+            "parallax_world",
+            "entity_001",
+            "entity_005",
+            "entity_006",
+            "faction_005"
+          ],
+          "locations_involved": [
+            "location_033",
+            "location_034"
+          ],
+          "factions_involved": [
+            "faction_005"
+          ],
+          "resources_involved": [],
+          "conflicts_involved": [],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_033",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с длинной холодной тенью, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_034",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с тёмным угловым затемнением, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_region_005",
+              "render_method": "engine_gradient",
+              "gradient_description": "Узкий серо-синий градиент с мягким затемнением по краям, без различимых объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_033_frozen_partition",
+              "instance_count": 2,
+              "render_layer": "background_mid",
+              "z_index": -90,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 1,
+              "col": 2
+            },
+            {
+              "entity_id": "env_depth_location_034_partition_end",
+              "instance_count": 2,
+              "render_layer": "background_near",
+              "z_index": -80,
+              "has_collision": false,
+              "parallax_factor": 0.8,
+              "row": 9,
+              "col": 8
+            },
+            {
+              "entity_id": "env_depth_region_005_peregorodka",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -85,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 4,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_region_005_proem",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 10,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 6,
+              "col": 9
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 10,
+            "rows": 11,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_region_005",
+              "E": "tile_cell_edge_region_005",
+              "T": "tile_target_region_005",
+              "O": "tile_obstacle_region_005",
+              "X": "empty"
+            },
+            "grid": [
+              "EEEEEEEEEE",
+              "ECCCCCCCCE",
+              "ECCOCCCCCE",
+              "ECCOCCTCCE",
+              "ECCCCCCCCE",
+              "ECCTCCCCCE",
+              "ECCCCOCCCE",
+              "ECCCCCCCCE",
+              "ECCTCCCCCE",
+              "ECCCCTCCCE",
+              "EEEEEEEEEE"
+            ]
+          },
+          "light_sources": [],
+          "micro_space": {
+            "description": "Sparse dead-end grid: central approach at row 5 col 5; partition obstacle cluster at rows 2-3 col 3; four target cells arranged to force one costly undo after both goal cells are occupied.",
+            "structure_rule": "One core_board zone; linear main path with dead-end trap and target pockets; no branching.",
+            "entry_point": "row 5, col 5",
+            "exit_point": "row 9, col 5",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_10_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "centered",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 128,
+                    "entity_category": "gameplay",
+                    "row": 5,
+                    "col": 5
+                  }
+                ],
+                "zone_objective": "Resolve the dead-end push puzzle with exact undo use after both target cells are occupied."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 70,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "optional",
+      "density_mode": "medium",
+      "scale_justification": "Поле 11x11 соответствует CBG 70 и 5 целям; move_limit 92 = ceil(70*1.2) для фазы challenge.",
+      "zone_topology": "N1 start -> N2 main hall -> N3 four-cell node -> N4 exit; одна standalone-микро без ветвлений.",
+      "complexity_vector": "quantitative",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.2,
+      "min_goals": 6,
+      "density_percentage": 20,
+      "critical_action": "толкать посылки в пять целевых ячеек, сохраняя два горячих жетона до узла четырёх ячеек",
+      "trap": "тупики в углах зала и преждевременная трата горячих жетонов",
+      "planning_depth": 8,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 16,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "нижний левый вход главного зала"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "центральная часть главного зала"
+          },
+          {
+            "id": "N3",
+            "role": "reward_zone",
+            "spatial_unit": "сортировочный узел четырёх ячеек"
+          },
+          {
+            "id": "N4",
+            "role": "exit",
+            "spatial_unit": "верхняя правая зона стабилизации"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N3",
+            "type": "main"
+          },
+          {
+            "from": "N3",
+            "to": "N4",
+            "type": "main"
+          }
+        ],
+        "optional_zones": [],
+        "distribution": {
+          "N1": [
+            "entity_001"
+          ],
+          "N2": [
+            "entity_002",
+            "entity_007"
+          ],
+          "N3": [
+            "resource_004",
+            "resource_005"
+          ],
+          "N4": [
+            "entity_006"
+          ]
+        }
+      },
+      "self_check": "PASS"
+    },
+    "macro_level_id": "macro_level_11",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 12,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        60,
+        120
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "optional",
+      "decoration_density_target": "medium"
+    },
+    "entity_ids": [
+      "tile_cell_tile_location_035",
+      "tile_cell_edge_tile_location_035",
+      "tile_target_tile_location_035",
+      "tile_obstacle_tile_location_035",
+      "tile_cell_tile_location_036",
+      "tile_cell_edge_tile_location_036",
+      "tile_target_tile_location_036",
+      "tile_obstacle_tile_location_036",
+      "tile_cell_location_037",
+      "tile_cell_edge_location_037",
+      "tile_target_location_037",
+      "tile_obstacle_location_037",
+      "tile_cell_location_038",
+      "tile_cell_edge_location_038",
+      "tile_target_location_038",
+      "tile_obstacle_location_038",
+      "env_atmo_location_035",
+      "env_atmo_location_036",
+      "env_atmo_location_037",
+      "env_atmo_location_038",
+      "env_depth_location_035_stone_column",
+      "env_depth_location_036_brass_tray",
+      "env_depth_location_037_lotok",
+      "env_depth_location_037_stopka",
+      "env_depth_location_038_derzhatel",
+      "env_depth_location_038_lampa",
+      "parallax_world",
+      "entity_001",
+      "entity_002",
+      "entity_007",
+      "resource_004",
+      "resource_005",
+      "entity_006",
+      "faction_004",
+      "faction_006",
+      "conflict_002",
+      "conflict_006"
+    ],
+    "location_ids": [
+      "location_035",
+      "location_036",
+      "location_037",
+      "location_038"
+    ],
+    "region_ids": [],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_11_micro_01",
+          "sequence_index": 1,
+          "title": "Главный зал станции: узел четырёх ячеек",
+          "phase": "challenge",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 11,
+            "rows": 11,
+            "slots": 0
+          },
+          "spatial_extent": "11x11",
+          "start_point": {
+            "row": 9,
+            "col": 1
+          },
+          "goal_or_exit": {
+            "row": 8,
+            "col": 4,
+            "condition": "all_targets_covered"
+          },
+          "resource_limits": {
+            "move_limit": 99,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 2
+          },
+          "win_condition": "all_boxes_on_targets",
+          "solvability_constraints": "Все посылки должны быть достижимы до цели без блокировки проходов; undo_limit=2 достаточно для исправления одной ошибки до узла четырёх ячеек.",
+          "objective": "Главный зал разобран, узел четырёх ячеек стабилен.",
+          "objective_details": [
+            "clear_all_goals: 6 targets",
+            "preserve_two_hot_tokens_for_four_cell_node"
+          ],
+          "requirements": [
+            "Пройти перегородочный тупик с сохранённым жетоном.",
+            "move_limit = 92",
+            "undo_limit = 2"
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo",
+            "restart"
+          ],
+          "completion_conditions": [
+            "micro_level_complete",
+            "macro_level_11.status = 'completed'",
+            "resource_005.status = 'claimed'"
+          ],
+          "rewards": [
+            "resource_004",
+            "resource_005"
+          ],
+          "unlocks": [
+            "modifier_stamps"
+          ],
+          "state_changes": [
+            "macro_level_11.status = 'completed'",
+            "resource_005.status = 'claimed'"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "entity_001",
+            "entity_002",
+            "entity_007",
+            "resource_004",
+            "resource_005",
+            "entity_006",
+            "tile_cell_tile_location_035",
+            "tile_cell_edge_tile_location_035",
+            "tile_target_tile_location_035",
+            "tile_obstacle_tile_location_035",
+            "env_atmo_location_035",
+            "env_atmo_location_036",
+            "env_atmo_location_037",
+            "env_atmo_location_038",
+            "env_depth_location_035_stone_column",
+            "env_depth_location_036_brass_tray",
+            "env_depth_location_037_lotok",
+            "env_depth_location_037_stopka",
+            "env_depth_location_038_derzhatel",
+            "env_depth_location_038_lampa",
+            "parallax_world"
+          ],
+          "locations_involved": [
+            "location_035",
+            "location_036",
+            "location_037",
+            "location_038"
+          ],
+          "factions_involved": [
+            "faction_004",
+            "faction_006"
+          ],
+          "resources_involved": [
+            "resource_004",
+            "resource_005"
+          ],
+          "conflicts_involved": [
+            "conflict_002",
+            "conflict_006"
+          ],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_035",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с широким холодным свечением, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_036",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от #1b2a3a к #3f8fb8 с четырьмя мягкими оранжевыми отсветами, без объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_037",
+              "render_method": "engine_gradient",
+              "gradient_description": "Вертикальный градиент от тёмно-синего к ледяному синему с мягким холодным свечением, без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_038",
+              "render_method": "engine_gradient",
+              "gradient_description": "Плавный градиент от тёмно-синего к тёплому оранжевому с мягким свечением, без различимых объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_035_stone_column",
+              "instance_count": 2,
+              "render_layer": "background_mid",
+              "z_index": -40,
+              "has_collision": false,
+              "parallax_factor": 0.4,
+              "row": 2,
+              "col": 2
+            },
+            {
+              "entity_id": "env_depth_location_036_brass_tray",
+              "instance_count": 3,
+              "render_layer": "background_near",
+              "z_index": -20,
+              "has_collision": false,
+              "parallax_factor": 0.2,
+              "row": 4,
+              "col": 3
+            },
+            {
+              "entity_id": "env_depth_location_037_lotok",
+              "instance_count": 4,
+              "render_layer": "background_near",
+              "z_index": -10,
+              "has_collision": false,
+              "parallax_factor": 0.15,
+              "row": 4,
+              "col": 4
+            },
+            {
+              "entity_id": "env_depth_location_037_stopka",
+              "instance_count": 3,
+              "render_layer": "foreground",
+              "z_index": 10,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 6,
+              "col": 6
+            },
+            {
+              "entity_id": "env_depth_location_038_derzhatel",
+              "instance_count": 3,
+              "render_layer": "background_mid",
+              "z_index": -30,
+              "has_collision": false,
+              "parallax_factor": 0.3,
+              "row": 7,
+              "col": 8
+            },
+            {
+              "entity_id": "env_depth_location_038_lampa",
+              "instance_count": 3,
+              "render_layer": "foreground",
+              "z_index": 20,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 9,
+              "col": 8
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 11,
+            "rows": 11,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_tile_location_035",
+              "E": "tile_cell_edge_tile_location_035",
+              "T": "tile_target_tile_location_035",
+              "O": "tile_obstacle_tile_location_035",
+              "X": "empty"
+            },
+            "grid": [
+              "OOOOOOOOOOO",
+              "OCCCCCTCCCO",
+              "OECCCCCCCCO",
+              "OCCOCCCTCCO",
+              "OCCCCTCCCCO",
+              "OCCCTCCCCCO",
+              "OCCCCCCCOCO",
+              "OCCCCCCECCO",
+              "OCCCTCCCCCO",
+              "OCCCCCCCCTO",
+              "OOOOOOOOOOO"
+            ]
+          },
+          "light_sources": [],
+          "micro_space": {
+            "description": "Просторный синий зал с каменными столбами, оранжевыми рамками целей и запасом горячих жетонов; расклад ячеек меняется от ежедневного seed, но столбы остаются.",
+            "structure_rule": "Одна крупная сеточная зона core_board; маршрут идёт от нижнего левого входа через центральный зал к узлу четырёх ячеек и верхней правой зоне стабилизации.",
+            "entry_point": "row 9, col 1",
+            "exit_point": "row 8, col 4",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_11_micro_01_01",
+                "zone_role": "safe",
+                "geometry_type": "grid",
+                "placement_rule": "centered",
+                "density": "medium",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 9,
+                    "col": 1
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 30,
+                    "entity_category": "gameplay",
+                    "row": 5,
+                    "col": 5
+                  },
+                  {
+                    "entity_id": "entity_007",
+                    "instance_count": 25,
+                    "entity_category": "gameplay",
+                    "row": 6,
+                    "col": 2
+                  },
+                  {
+                    "entity_id": "resource_004",
+                    "instance_count": 40,
+                    "entity_category": "gameplay",
+                    "row": 7,
+                    "col": 3
+                  },
+                  {
+                    "entity_id": "resource_005",
+                    "instance_count": 45,
+                    "entity_category": "gameplay",
+                    "row": 3,
+                    "col": 4
+                  }
+                ],
+                "zone_objective": "resolve large hall and stabilize four-cell node"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_architect_reasoning": {
+      "genre_id": "logic_sokoban",
+      "target_interaction_cycles": 80,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "perspective_class": "grid_abstract",
+      "tileset_mode": "full",
+      "light_mode": "no",
+      "density_mode": "sparse",
+      "scale_justification": "Финальная смена — одна capstone-микро на поле 12x12, ЦБГ 80, лимит ходов 96, 6 целей, разреженная декоративная рамка; ветвления не проектируются, так как micro_phases_count=1 и micro_role=standalone.",
+      "zone_topology": "Единая core_board-зона 12x12: старт в нижней части, шесть целей в верхней части, центральный проход между препятствиями.",
+      "complexity_vector": "precision",
+      "entity_classification_source": "entity_classification",
+      "limit_ratio": 1.2,
+      "min_goals": 6,
+      "density_percentage": 21,
+      "critical_action": "Толкать шесть посылок entity_002 в шесть target-клеток tile_target_region_006, не перекрывая центральный проход.",
+      "trap": "Загон посылки в угол или перекрытие центрального прохода препятствиями row5 col3 и row5 col8.",
+      "planning_depth": 5,
+      "parallax_count": 1,
+      "board_skin_count": 0,
+      "tile_asset_count": 12,
+      "surface_asset_count": 0,
+      "topology_plan": {
+        "nodes": [
+          {
+            "id": "N1",
+            "role": "start",
+            "spatial_unit": "нижняя стартовая клетка row10 col5"
+          },
+          {
+            "id": "N2",
+            "role": "main_path",
+            "spatial_unit": "центральный проход и ряды row8-row9 с шестью посылками"
+          },
+          {
+            "id": "N3",
+            "role": "exit",
+            "spatial_unit": "верхняя зона шести target-клеток row1-row2"
+          }
+        ],
+        "edges": [
+          {
+            "from": "N1",
+            "to": "N2",
+            "type": "main"
+          },
+          {
+            "from": "N2",
+            "to": "N3",
+            "type": "main"
+          }
+        ],
+        "optional_zones": [],
+        "distribution": {
+          "N1": [
+            "entity_001",
+            "resource_006"
+          ],
+          "N2": [
+            "entity_002",
+            "entity_002",
+            "entity_002",
+            "entity_002",
+            "entity_002",
+            "entity_002"
+          ],
+          "N3": [
+            "tile_target_region_006"
+          ]
+        }
+      },
+      "self_check": "PASS"
+    },
+    "macro_level_id": "macro_level_12",
+    "space_model": "fixed_board",
+    "layout_mode": "CONSTRAINT_SOLVE",
+    "genre_params": {
+      "genre_id": "logic_sokoban",
+      "macro_count_target": 12,
+      "micro_per_macro_target": 1,
+      "ui_level_model": "micro",
+      "micro_role": "standalone",
+      "cbg_range": [
+        60,
+        120
+      ],
+      "perspective_class": "grid_abstract",
+      "tileset_enabled": "full",
+      "tile_types": [
+        "cell_tile",
+        "cell_edge_tile",
+        "target_tile",
+        "obstacle_tile"
+      ],
+      "light_layer_enabled": "no",
+      "decoration_density_target": "sparse"
+    },
+    "entity_ids": [
+      "tile_cell_location_039",
+      "tile_cell_edge_location_039",
+      "tile_target_location_039",
+      "tile_obstacle_location_039",
+      "tile_cell_location_040",
+      "tile_cell_edge_location_040",
+      "tile_target_location_040",
+      "tile_obstacle_location_040",
+      "tile_cell_region_006",
+      "tile_cell_edge_region_006",
+      "tile_target_region_006",
+      "tile_obstacle_region_006",
+      "env_atmo_location_039",
+      "env_atmo_location_040",
+      "env_depth_location_039_shtamp",
+      "env_depth_location_039_tablichka",
+      "env_depth_location_040_pult",
+      "env_depth_location_040_strelka",
+      "env_atmo_region_006",
+      "env_depth_region_006_stol",
+      "env_depth_region_006_kolonna",
+      "parallax_world",
+      "entity_001",
+      "entity_002",
+      "resource_006",
+      "entity_006",
+      "faction_004",
+      "faction_006",
+      "conflict_003",
+      "conflict_009",
+      "conflict_010"
+    ],
+    "location_ids": [
+      "location_039",
+      "location_040"
+    ],
+    "region_ids": [
+      "region_006"
+    ],
+    "level_package": {
+      "micro_levels": [
+        {
+          "micro_level_id": "macro_level_12_micro_01",
+          "sequence_index": 1,
+          "title": "Финальная смена",
+          "phase": "capstone",
+          "is_checkpoint_after": false,
+          "exit_type": "micro_complete",
+          "perspective_class": "grid_abstract",
+          "world_or_board": {
+            "cols": 12,
+            "rows": 12,
+            "slots": 0
+          },
+          "spatial_extent": "12x12",
+          "start_point": {
+            "row": 10,
+            "col": 5
+          },
+          "goal_or_exit": {
+            "row": 1,
+            "col": 5,
+            "condition": "all target tiles tile_target_region_006 covered by entity_002"
+          },
+          "resource_limits": {
+            "move_limit": 99,
+            "turn_limit": null,
+            "action_budget": null,
+            "time_limit": null,
+            "wave_limit": null,
+            "undo_limit": 2
+          },
+          "win_condition": "all pushable entities entity_002 stand on target cells tile_target_region_006; target coverage count = 6",
+          "solvability_constraints": "move_limit 96 must allow a BFS-verified Sokoban solution; central passage row5 col4-row5 col7 remains open; no entity_002 may be pushed into a corner without undo",
+          "objective": "Закрыть финальную смену с минимальным числом лишних толчков и сохранить точность для ежедневного завала.",
+          "objective_details": [
+            "Разместить шесть ледяных посылок entity_002 в шесть ячеек tile_target_region_006.",
+            "Не перекрыть центральный проход между препятствиями tile_obstacle_region_006.",
+            "Соблюсти лимит 96 ходов и не исчерпать undo_limit 2 до закрытия всех целей."
+          ],
+          "requirements": [
+            "Разобрать главный зал и открыть диспетчерский зал.",
+            "conflict_003 active: лимит точных толчков действует.",
+            "conflict_009 active: смена без подсказки бригадира.",
+            "conflict_010 active: ежедневный завал станции как фон финальной проверки."
+          ],
+          "actions": [
+            "move_up",
+            "move_down",
+            "move_left",
+            "move_right",
+            "undo",
+            "restart"
+          ],
+          "completion_conditions": [
+            "micro_level_complete",
+            "GOAL_REACHED for all tile_target_region_006",
+            "entity_002.count_on(tile_target_region_006) = 6",
+            "Финальная смена закрыта, ежедневный завал и бесконечная проверка доступны."
+          ],
+          "rewards": [
+            "resource_006"
+          ],
+          "unlocks": [
+            "Финальная смена закрыта, ежедневный завал и бесконечная проверка доступны."
+          ],
+          "state_changes": [
+            "conflict_003.status = 'resolved'",
+            "conflict_009.status = 'resolved'",
+            "conflict_010.status = 'resolved'",
+            "resource_006.status = 'collected'",
+            "faction_004.status = 'aligned'",
+            "faction_006.status = 'aligned'"
+          ],
+          "dependencies": [],
+          "entities_involved": [
+            "tile_cell_location_039",
+            "tile_cell_edge_location_039",
+            "tile_target_location_039",
+            "tile_obstacle_location_039",
+            "tile_cell_location_040",
+            "tile_cell_edge_location_040",
+            "tile_target_location_040",
+            "tile_obstacle_location_040",
+            "tile_cell_region_006",
+            "tile_cell_edge_region_006",
+            "tile_target_region_006",
+            "tile_obstacle_region_006",
+            "env_atmo_location_039",
+            "env_atmo_location_040",
+            "env_depth_location_039_shtamp",
+            "env_depth_location_039_tablichka",
+            "env_depth_location_040_pult",
+            "env_depth_location_040_strelka",
+            "env_atmo_region_006",
+            "env_depth_region_006_stol",
+            "env_depth_region_006_kolonna",
+            "parallax_world",
+            "entity_001",
+            "entity_002",
+            "resource_006",
+            "entity_006",
+            "faction_004",
+            "faction_006",
+            "conflict_003",
+            "conflict_009",
+            "conflict_010"
+          ],
+          "locations_involved": [
+            "location_039",
+            "location_040"
+          ],
+          "factions_involved": [
+            "faction_004",
+            "faction_006"
+          ],
+          "resources_involved": [
+            "resource_006"
+          ],
+          "conflicts_involved": [
+            "conflict_003",
+            "conflict_009",
+            "conflict_010"
+          ],
+          "engine_backgrounds": [
+            {
+              "entity_id": "env_atmo_location_039",
+              "render_method": "engine_gradient",
+              "gradient_description": "Глубокий синий градиент с тонкой оранжевой полосой у нижнего края, без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_location_040",
+              "render_method": "engine_gradient",
+              "gradient_description": "Холодный сине-серый градиент с бледным ледяным отсветом, без различимых объектов."
+            },
+            {
+              "entity_id": "env_atmo_region_006",
+              "render_method": "engine_gradient",
+              "gradient_description": "Широкий градиент от тёмно-синего к ледяному синему с тёплой оранжевой точкой свечения, без различимых объектов."
+            }
+          ],
+          "parallax_layers": [
+            {
+              "entity_id": "parallax_world",
+              "layer_role": "background_far",
+              "render_layer": "background_far",
+              "z_index": -100,
+              "parallax_factor": 0.2,
+              "alpha": 0.47
+            }
+          ],
+          "board_skins": [],
+          "decorative_layout": [
+            {
+              "entity_id": "env_depth_location_039_shtamp",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -40,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 0,
+              "col": 1
+            },
+            {
+              "entity_id": "env_depth_location_039_tablichka",
+              "instance_count": 1,
+              "render_layer": "background_mid",
+              "z_index": -40,
+              "has_collision": false,
+              "parallax_factor": 0.5,
+              "row": 0,
+              "col": 10
+            },
+            {
+              "entity_id": "env_depth_location_040_pult",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -30,
+              "has_collision": false,
+              "parallax_factor": 0.7,
+              "row": 11,
+              "col": 1
+            },
+            {
+              "entity_id": "env_depth_location_040_strelka",
+              "instance_count": 1,
+              "render_layer": "background_near",
+              "z_index": -30,
+              "has_collision": false,
+              "parallax_factor": 0.7,
+              "row": 11,
+              "col": 10
+            },
+            {
+              "entity_id": "env_depth_region_006_stol",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 20,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 6,
+              "col": 0
+            },
+            {
+              "entity_id": "env_depth_region_006_kolonna",
+              "instance_count": 1,
+              "render_layer": "foreground",
+              "z_index": 20,
+              "has_collision": false,
+              "parallax_factor": 0,
+              "row": 6,
+              "col": 11
+            }
+          ],
+          "tile_map": {
+            "grid_type": "full",
+            "perspective_class": "grid_abstract",
+            "cols": 12,
+            "rows": 12,
+            "tile_size": 32,
+            "legend": {
+              "C": "tile_cell_region_006",
+              "E": "tile_cell_edge_region_006",
+              "T": "tile_target_region_006",
+              "O": "tile_obstacle_region_006",
+              "X": "empty"
+            },
+            "grid": [
+              "OOOOOOOOOOOO",
+              "OCCCTTTTCCCO",
+              "OCCCTCCTCCCO",
+              "OCCCCCCCCCCO",
+              "OCCCCCCCCCCO",
+              "OCCOCCCCOCCO",
+              "OCCCCCCCCCCO",
+              "OCCCCCCCCCCO",
+              "OCCCCCCCCCCO",
+              "OCCCCCCCCCCO",
+              "OCCCCCCCCCCO",
+              "OOOOOOOOOOOO"
+            ]
+          },
+          "light_sources": [],
+          "micro_space": {
+            "description": "Финальный диспетчерский зал 12x12: старт в нижней части, шесть целей в верхней части, центральный проход между двумя препятствиями; разреженная декоративная рамка вокруг поля.",
+            "structure_rule": "Единая core_board-зона; все интерактивные сущности стоят на проходимых C- или T-клетках.",
+            "entry_point": "row10 col5",
+            "exit_point": "row1 col5",
+            "camera_or_view": "grid_abstract top-down board",
+            "zones": [
+              {
+                "zone_id": "Z_macro_level_12_micro_01_01",
+                "zone_role": "core_board",
+                "geometry_type": "grid",
+                "placement_rule": "symmetric",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [
+                  {
+                    "entity_id": "entity_001",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 10,
+                    "col": 5
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 9,
+                    "col": 4
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 9,
+                    "col": 5
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 9,
+                    "col": 6
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 9,
+                    "col": 7
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 8,
+                    "col": 4
+                  },
+                  {
+                    "entity_id": "entity_002",
+                    "instance_count": 1,
+                    "entity_category": "gameplay",
+                    "row": 8,
+                    "col": 7
+                  },
+                  {
+                    "entity_id": "resource_006",
+                    "instance_count": 153,
+                    "entity_category": "gameplay",
+                    "row": 10,
+                    "col": 8
+                  }
+                ],
+                "zone_objective": "Разместить шесть entity_002 на шести tile_target_region_006, сохранив центральный проход и уложившись в move_limit 96."
+              },
+              {
+                "zone_id": "Z_macro_level_12_micro_01_01_safe",
+                "zone_role": "safe",
+                "geometry_type": "grid",
+                "placement_rule": "symmetric",
+                "density": "sparse",
+                "zone_links": [],
+                "entities_in_zone": [],
+                "zone_objective": "Безопасная зона перед финальным закрытием смены."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

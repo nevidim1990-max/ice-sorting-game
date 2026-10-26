@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#091720">
+  <title>Ледяная Сортировка</title>
+  <style>
+    :root { color-scheme: dark; font-family: Inter, "Segoe UI", sans-serif; background: #091720; color: #e9f6fa; }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-width: 320px; height: 100%; margin: 0; overflow: hidden; }
+    [hidden] { display: none !important; }
+    body { background: radial-gradient(ellipse at 50% 38%, #1e5265 0, #102b39 43%, #08141c 100%); touch-action: none; user-select: none; }
+    button { font: inherit; color: inherit; cursor: pointer; border: 1px solid rgba(175,225,239,.2); }
+    button:focus-visible { outline: 2px solid #9ce8f8; outline-offset: 3px; }
+    #app { height: 100%; min-height: 0; display: flex; flex-direction: column; padding: max(18px, env(safe-area-inset-top)) max(22px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left)); }
+    .topbar { height: 58px; display: flex; align-items: center; justify-content: space-between; max-width: 1440px; width: 100%; margin: 0 auto 14px; position: relative; z-index: 2; }
+    .brand { display: flex; align-items: center; gap: 12px; color: #b8dce6; letter-spacing: .16em; text-transform: uppercase; font-size: 11px; font-weight: 800; }
+    .brand-mark { width: 32px; height: 32px; border: 1px solid #7ab9ca; border-radius: 9px; display: grid; place-items: center; color: #efad64; font-size: 18px; box-shadow: inset 0 0 16px #2e718055; }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .quiet-button { background: #122b37b8; min-width: 42px; height: 40px; border-radius: 12px; color: #c7e5ec; }
+    .quiet-button:hover, .tool:hover { border-color: #a8dce8; background-color: #204354; }
+    #layout { flex: 1; display: grid; grid-template-columns: minmax(260px, 360px) minmax(0, 1fr); gap: clamp(18px, 3vw, 42px); width: 100%; max-width: 1440px; min-height: 0; margin: 0 auto; }
+    .side { display: flex; flex-direction: column; justify-content: center; min-height: 0; padding: 10px 0; }
+    .eyebrow { color: #8fc1cd; font-size: 11px; font-weight: 800; letter-spacing: .19em; text-transform: uppercase; }
+    h1 { font: 700 clamp(34px, 4.2vw, 58px)/.98 Georgia, "Times New Roman", serif; letter-spacing: -.045em; margin: 16px 0 18px; max-width: 440px; }
+    .lede { color: #b6d1d8; line-height: 1.65; font-size: 15px; max-width: 38ch; margin: 0 0 28px; }
+    .primary { color: #14212a; background: linear-gradient(135deg,#f3c282,#df9554); border: 0; box-shadow: 0 7px 22px #030c1170, inset 0 1px #ffe2af; min-height: 60px; min-width: 200px; padding: 0 24px; font-weight: 800; border-radius: 13px; }
+    .primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .secondary { background: #16313d; border-radius: 12px; min-height: 48px; padding: 0 18px; color: #d8edf2; }
+    .menu-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .microcopy { margin-top: 22px; color: #759aa5; font-size: 12px; line-height: 1.5; }
+    .station { border: 1px solid #9bd3e522; border-radius: 22px; background: linear-gradient(145deg, #8bc7d70c, #05131bd1); box-shadow: 0 24px 90px #020a10a8, inset 0 1px #d7f4ff12; min-height: 0; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+    .station:before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .28; background: repeating-linear-gradient(0deg, transparent 0 49px, #b9e5ee0c 50px), linear-gradient(90deg, transparent, #a5e4f30b 50%, transparent); }
+    .station-head, .station-foot { position: relative; z-index: 1; padding: 15px 18px; display: flex; justify-content: space-between; align-items: center; color: #8fb9c4; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .station-head { border-bottom: 1px solid #a9d9e415; }
+    .station-foot { border-top: 1px solid #a9d9e415; letter-spacing: .04em; text-transform: none; font-size: 12px; }
+    .signal { display: inline-flex; gap: 8px; align-items: center; }
+    .signal:before { content: ""; width: 7px; height: 7px; background: #8ad7df; border-radius: 100%; box-shadow: 0 0 12px #7ee1e5; }
+    #board-wrap { min-height: 0; flex: 1; position: relative; display: grid; place-items: center; padding: 8px; }
+    #game-canvas { width: 100%; height: 100%; min-height: 250px; position: relative; z-index: 1; }
+    #game-canvas canvas { display: block; width: 100% !important; height: 100% !important; object-fit: contain; }
+    .hud { position: absolute; top: 16px; left: 16px; right: 16px; display: none; align-items: start; justify-content: space-between; z-index: 2; pointer-events: none; }
+    .hud.active { display: flex; }
+    .stats { display: flex; gap: 8px; }
+    .stat { background: #091720d9; border: 1px solid #a8d9e226; border-radius: 11px; padding: 8px 11px; min-width: 69px; text-align: center; backdrop-filter: blur(8px); }
+    .stat span { color: #82aeb9; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; display: block; }
+    .stat b { color: #edfaff; display: block; font-size: 16px; margin-top: 2px; }
+    .hud .quiet-button { pointer-events: auto; }
+    .tools { display: none; justify-content: center; gap: 9px; position: absolute; bottom: 14px; left: 10px; right: 10px; z-index: 2; }
+    .tools.active { display: flex; }
+    .tool { min-height: 42px; border-radius: 11px; background: #102a36df; padding: 0 16px; font-size: 12px; font-weight: 700; color: #c9e3e9; backdrop-filter: blur(8px); }
+    .tool:disabled { opacity: .45; cursor: default; }
+    .progressline { height: 2px; width: 80px; background: #2a4953; overflow: hidden; border-radius: 2px; }
+    .progressline i { display: block; height: 100%; width: 0; background: #d99b62; transition: width .35s; }
+    .overlay { display: none; position: fixed; inset: 0; padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)); background: #061219cc; backdrop-filter: blur(12px); z-index: 10; align-items: center; justify-content: center; }
+    .overlay.active { display: flex; }
+    .panel { width: min(600px, 100%); max-height: 70vh; overflow: auto; padding: clamp(22px, 4vw, 36px); border-radius: 21px; border: 1px solid #91cfdb36; background: linear-gradient(145deg,#193845,#0c202a 70%); box-shadow: 0 30px 100px #02090dad, inset 0 1px #e1faff12; }
+    .panel h2 { margin: 10px 0 12px; font: 700 clamp(26px, 4vw, 38px)/1.05 Georgia,serif; letter-spacing: -.02em; }
+    .panel p { color: #b5cfd6; line-height: 1.6; margin: 0 0 20px; }
+    .panel-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    #level-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; margin-top: 18px; }
+    .level-card { text-align: left; padding: 13px 14px; border-radius: 12px; min-height: 68px; background: #102a36; }
+    .level-card strong { display: block; font-size: 13px; margin-bottom: 5px; }
+    .level-card small { color: #8eb2bd; }
+    .level-card.locked, .level-card.broken { opacity: .42; cursor: not-allowed; }
+    .level-card.cleared { border-color: #c79460; }
+    .help { color: #86aab5; font-size: 12px; margin-top: 15px; }
+    #toast { position: fixed; bottom: max(26px, env(safe-area-inset-bottom)); left: 50%; transform: translate(-50%, 20px); opacity: 0; padding: 11px 16px; border: 1px solid #9bcedb45; border-radius: 12px; background: #0b222e; color: #e4f5f8; z-index: 30; pointer-events: none; transition: .2s; text-align: center; max-width: calc(100vw - 32px); }
+    #toast.show { opacity: 1; transform: translate(-50%,0); }
+    @media (max-width: 780px) {
+      #app { padding: max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left)); }
+      .topbar { height: 42px; margin-bottom: 9px; }
+      #layout { display: flex; flex-direction: column; gap: 10px; }
+      .side { padding: 4px 4px 0; flex: 0 0 auto; }
+      .side:not(.game-side) { justify-content: flex-start; }
+      h1 { font-size: clamp(30px, 10vw, 46px); margin: 8px 0; }
+      .lede { font-size: 13px; line-height: 1.45; margin: 0 0 12px; max-width: 52ch; }
+      .microcopy { display: none; }
+      .menu-actions .primary { min-height: 45px; min-width: 0; }
+      .station { flex: 1; min-height: 0; border-radius: 17px; }
+      .station-head, .station-foot { padding: 10px 12px; }
+      #board-wrap { padding: 2px; }
+      #game-canvas { min-height: 230px; }
+      .hud { top: 10px; left: 10px; right: 10px; }
+      .stat { min-width: 53px; padding: 6px 7px; }
+      .stat span { font-size: 8px; }
+      .stat b { font-size: 14px; }
+      .tools { bottom: 8px; }
+      .tool { min-height: 40px; padding: 0 12px; }
+    }
+    @media (max-width: 420px) {
+      .brand { font-size: 9px; gap: 8px; }
+      .brand-mark { width: 28px; height: 28px; }
+      .top-actions { gap: 5px; }
+      .quiet-button { height: 36px; min-width: 38px; }
+      .hud .right { gap: 4px; }
+      .stat { min-width: 47px; padding-inline: 5px; }
+      .station-foot { font-size: 10px; }
+      #level-list { grid-template-columns: 1fr; }
+      .panel { max-height: 70vh; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">✣</span><span>Станция «Северный узел»</span></div>
+      <div class="top-actions"><button class="quiet-button" id="mute" aria-label="Выключить звук" title="Звук">♫</button><button class="quiet-button" id="open-levels" aria-label="Выбор участка" title="Участки">≡</button></div>
+    </header>
+    <main id="layout">
+      <section class="side" id="intro-copy">
+        <div class="eyebrow">Смена 01 · Сортировочный зал</div>
+        <h1>Ледяная<br>Сортировка</h1>
+        <p class="lede" id="onboarding"></p>
+        <div class="menu-actions"><button class="primary" id="play">Начать смену <span aria-hidden="true">↗</span></button><button class="secondary" id="continue" hidden>Продолжить</button><button class="secondary" id="settings">Настройки</button><button class="secondary" id="about">Об игре</button></div>
+        <div class="microcopy">Стрелки / WASD — движение · Z — отогреть ход<br>На телефоне проведите пальцем по полю.</div>
+      </section>
+      <section class="side game-side" id="game-side" hidden>
+        <div class="eyebrow" id="level-kicker">Участок 01</div>
+        <h1 id="level-title">Первый прямой разбор</h1>
+        <p class="lede" id="level-objective">Толкайте посылки в ячейки. Не позволяйте льду закрыть путь.</p>
+        <div class="menu-actions"><button class="secondary" id="back-menu">В меню</button></div>
+        <div class="microcopy">Клетка рядом с сортировщиком: нажмите, чтобы сделать шаг.<br>Посылка движется только от толчка.</div>
+      </section>
+      <section class="station" aria-label="Игровое поле">
+        <div class="station-head"><span class="signal" id="station-state">Станция готова</span><span id="station-code">NORTH / 01</span></div>
+        <div id="board-wrap">
+          <div id="game-canvas"></div>
+          <div class="hud" id="hud">
+            <div class="stats"><div class="stat"><span>Участок</span><b id="hud-level">01</b></div><div class="stat"><span>Ходы</span><b id="hud-moves">0</b></div></div>
+            <div class="stats"><div class="stat"><span>Толчки</span><b id="hud-pushes">0</b></div><div class="stat"><span>Отогрев</span><b id="hud-undo">0</b></div></div>
+          </div>
+          <div class="tools" id="tools"><button class="tool" id="undo">↶ Отогреть</button><button class="tool" id="restart">Перезапуск</button><button class="tool" id="pause">Пауза</button></div>
+        </div>
+        <div class="station-foot"><span id="status-line">Поставьте каждую посылку в ячейку</span><span class="progressline"><i id="progress"></i></span></div>
+      </section>
+    </main>
+  </div>
+  <div class="overlay" id="intro"><div class="panel"><div class="eyebrow">Запись бригадира · перед сменой</div><h2>Станция не может ждать.</h2><p id="lore-intro"></p><div class="panel-actions"><button class="primary" id="intro-go">К участкам</button><button class="secondary" id="intro-skip">Пропустить</button></div></div></div>
+  <div class="overlay" id="levels"><div class="panel"><div class="eyebrow">Журнал смены</div><h2>Выберите участок</h2><p>Открывайте следующий участок, когда завершите предыдущий. Прогресс хранится на этом устройстве.</p><div id="level-list"></div><div class="panel-actions"><button class="secondary" id="levels-close">Назад</button></div></div></div>
+  <div class="overlay" id="pause-screen"><div class="panel"><div class="eyebrow">Смена приостановлена</div><h2>Пауза</h2><p>Поле замерло. Можно спокойно обдумать следующий толчок.</p><div class="panel-actions"><button class="primary" id="resume">Продолжить</button><button class="secondary" id="pause-mute">♫ Звук</button><button class="secondary" id="pause-restart">Перезапустить участок</button><button class="secondary" id="pause-menu">В меню</button></div></div></div>
+  <div class="overlay" id="result-screen"><div class="panel"><div class="eyebrow" id="result-kicker">Участок разобран</div><h2 id="result-title">Сортировка завершена</h2><p id="result-body"></p><div class="panel-actions"><button class="primary" id="next">Следующий участок</button><button class="secondary" id="retry">Ещё раз</button><button class="secondary" id="result-menu">В меню</button></div></div></div>
+  <div class="overlay" id="settings-screen"><div class="panel"><div class="eyebrow">Звук станции</div><h2>Настройки</h2><p>Звуковые сигналы включаются после первого действия. Ваш выбор сохраняется.</p><div class="panel-actions"><button class="primary" id="settings-mute">Выключить звук</button><button class="secondary" id="settings-close">Назад</button></div></div></div>
+  <div class="overlay" id="tutorial-screen"><div class="panel"><div class="eyebrow">Обучение · участок 01</div><h2>Три правила сортировки</h2><p>Ходите стрелками или проведите пальцем по полю. Чтобы сдвинуть посылку, встаньте рядом и толкните её. Поставьте каждую посылку в ячейку; клавиша Z или кнопка «Отогреть» отменит ход.</p><div class="panel-actions"><button class="primary" id="tutorial-start">Начать тренировку</button></div></div></div>
+  <div class="overlay" id="postgame-screen"><div class="panel"><div class="eyebrow">Смена завершена</div><h2>Станция снова работает.</h2><p>Вы разобрали все участки. Можно начать новую смену и улучшить точность.</p><div class="panel-actions"><button class="primary" id="postgame-replay">Новая смена</button><button class="secondary" id="postgame-menu">В меню</button></div></div></div>
+  <div class="overlay active" id="splash"><div class="panel"><div class="eyebrow">Северный узел · морозная почта</div><h2>Ледяная Сортировка</h2><p>Каждый толчок меняет маршрут.</p></div></div>
+  <div class="overlay" id="about-screen"><div class="panel"><div class="eyebrow">Краткая инструкция</div><h2>Один толчок меняет всё.</h2><p>Ходите по сетке и толкайте ледяные посылки к оранжевым ячейкам. Посылки нельзя тянуть. Если ошиблись — потратьте горячий жетон, чтобы отмотать последний ход, или начните участок заново.</p><div class="panel-actions"><button class="primary" id="about-close">Понятно</button></div></div></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="./assets/phaser.min.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>
