@@ -204,6 +204,17 @@
     if (ref.includes('edge')) return 'edge';
     return 'floor';
   }
+  function findMostCommonFloor(micro) {
+    const counts = new Map();
+    for (const row of micro.tile_map.grid) {
+      for (const symbol of row) {
+        if (tileKind(micro, symbol) !== 'floor') continue;
+        const ref = tileRef(micro, symbol);
+        counts.set(ref, (counts.get(ref) || 0) + 1);
+      }
+    }
+    return [...counts].reduce((best, entry) => entry[1] > best[1] ? entry : best, [null, 0])[0];
+  }
   function positionKey(row, col) { return `${row},${col}`; }
   function isInside(board, row, col) { return row >= 0 && col >= 0 && row < board.rows && col < board.cols; }
   function isOpen(board, row, col) { return isInside(board, row, col) && !board.walls.has(positionKey(row, col)); }
@@ -214,6 +225,7 @@
     return progression.map((macro, index) => {
       const micro = macro.level_package.micro_levels[0];
       const map = micro.tile_map;
+      const baseFloorRef = findMostCommonFloor(micro);
       const board = { rows: map.rows, cols: map.cols, grid: map.grid, walls: new Set(), goals: new Set() };
       const allGoals = [];
       for (let row = 0; row < map.rows; row++) {
@@ -307,6 +319,7 @@
         name: micro.title,
         stageName: macro.level_name || region?.name || 'Мёрзлая станция',
         hook: location?.expansion_hooks?.[0] || region?.expansion_hooks?.[0] || micro.micro_space?.description || 'Разбери завал и сохрани точность смены.',
+        baseFloorRef,
         objective,
         maxMoves: Number(micro.resource_limits?.move_limit) || 99,
         undoLimit: Number(micro.resource_limits?.undo_limit) || 0,
@@ -669,7 +682,6 @@
       this.layout = null;
       this.actorSprites = new Map();
       this.boardContainer = null;
-      this.decorContainer = null;
       this.lastResize = '';
       this.pointerStart = null;
     }
@@ -710,24 +722,19 @@
     drawBoard() {
       if (!gameRun || !canvasReady) return;
       this.boardContainer?.destroy(true);
-      this.decorContainer?.destroy(true);
       for (const sprite of this.actorSprites.values()) sprite.destroy();
       this.actorSprites.clear();
       this.layout = this.computeLayout();
       const level = gameRun.level;
       const { x, y, cell } = this.layout;
       this.boardContainer = this.add.container(0, 0).setDepth(0);
-      this.decorContainer = this.add.container(0, 0).setDepth(10);
-      const floorRef = Object.keys(level.micro.tile_map.legend).map((symbol) => level.micro.tile_map.legend[symbol])
-        .find((ref) => ref !== 'empty' && ref.includes('cell') && !ref.includes('edge'));
-      const edgeRef = Object.keys(level.micro.tile_map.legend).map((symbol) => level.micro.tile_map.legend[symbol])
-        .find((ref) => ref !== 'empty' && ref.includes('edge')) || floorRef;
       for (let row = 0; row < level.board.rows; row++) {
         for (let col = 0; col < level.board.cols; col++) {
           const symbol = level.board.grid[row][col];
           const kind = tileKind(level.micro, symbol);
           const activeGoal = level.board.goals.has(positionKey(row, col));
-          const ref = kind === 'goal' && !activeGoal ? floorRef : kind === 'edge' ? edgeRef : tileRef(level.micro, symbol);
+          const isFloor = kind === 'floor' || kind === 'edge' || (kind === 'goal' && !activeGoal);
+          const ref = isFloor ? level.baseFloorRef || tileRef(level.micro, symbol) : tileRef(level.micro, symbol);
           const asset = assetByRef[ref];
           if (!asset || !this.textures.exists(asset.unique_asset_id)) continue;
           const tint = kind === 'wall' ? 0x91b5c2 : kind === 'goal' && activeGoal ? 0xf2b36a : 0xa6d8e8;
@@ -737,7 +744,6 @@
         }
       }
       this.drawCracks();
-      this.drawDecorations();
       this.drawActors();
     }
     drawCracks() {
@@ -758,33 +764,6 @@
         cracks.strokePath();
       }
       this.crackGraphics = cracks;
-    }
-    drawDecorations() {
-      if (!gameRun || !this.decorContainer) return;
-      const { x, y, cell } = this.layout;
-      const occupied = new Set([
-        positionKey(gameRun.player.row, gameRun.player.col),
-        ...gameRun.boxes.map((box) => positionKey(box.row, box.col)),
-        ...gameRun.collectibles.map((item) => positionKey(item.row, item.col)),
-        ...gameRun.level.board.goals,
-      ]);
-      const floorSpots = [];
-      for (let row = 0; row < gameRun.level.board.rows; row++) {
-        for (let col = 0; col < gameRun.level.board.cols; col++) {
-          const key = positionKey(row, col);
-          if (isOpen(gameRun.level.board, row, col) && !occupied.has(key)) floorSpots.push({ row, col });
-        }
-      }
-      floorSpots.sort((a, b) => Math.min(a.row, a.col, gameRun.level.board.rows - a.row, gameRun.level.board.cols - a.col)
-        - Math.min(b.row, b.col, gameRun.level.board.rows - b.row, gameRun.level.board.cols - b.col));
-      const refs = [...new Set((gameRun.level.macro.entity_ids || []).filter((id) => id.startsWith('env_depth_')))]
-        .map((id) => assetByRef[id]).filter((asset) => asset && this.textures.exists(asset.unique_asset_id));
-      refs.slice(0, Math.min(4, floorSpots.length)).forEach((asset, index) => {
-        const spot = floorSpots[index];
-        const sprite = this.add.image(x + spot.col * cell + cell / 2, y + spot.row * cell + cell / 2, asset.unique_asset_id)
-          .setDisplaySize(cell * .7, cell * .7).setAlpha(.3).setDepth(9);
-        this.decorContainer.add(sprite);
-      });
     }
     drawActors() {
       if (!gameRun || !this.layout) return;
@@ -830,7 +809,6 @@
       this.refresh();
       const showBoard = gameRun && ['PLAYING', 'PAUSED', 'VICTORY', 'GAME_OVER'].includes(nextMode);
       this.boardContainer?.setVisible(!!showBoard);
-      this.decorContainer?.setVisible(!!showBoard);
       this.crackGraphics?.setVisible(!!showBoard);
       this.playerShadow?.setVisible(!!showBoard);
       for (const sprite of this.actorSprites.values()) sprite.setVisible(!!showBoard);
@@ -846,7 +824,6 @@
       if (gameRun && ['PLAYING', 'PAUSED', 'VICTORY', 'GAME_OVER'].includes(this.mode)) this.drawBoard();
       else {
         this.boardContainer?.setVisible(false);
-        this.decorContainer?.setVisible(false);
         this.crackGraphics?.setVisible(false);
         this.playerShadow?.setVisible(false);
         for (const sprite of this.actorSprites.values()) sprite.setVisible(false);

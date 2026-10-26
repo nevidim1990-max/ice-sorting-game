@@ -1,6 +1,6 @@
 {
   "status": "RETEST_REQUIRED",
-  "reason": "Static checks and targeted browser tests passed; the full playthrough and release gate remain incomplete.",
+  "reason": "Static checks and targeted browser tests, including floor rendering and box interactions in levels 1-2, passed; the full playthrough and release gate remain incomplete.",
   "build": "vite build",
   "data_files": [
     "theme.json",
@@ -20,6 +20,9 @@
     "level_card_localization": "PASS",
     "stage_launches": "PASS",
     "responsive_visual_review": "PASS",
+    "walkable_floor_unification": "PASS",
+    "wall_target_actor_visuals": "PASS",
+    "box_push_and_undo": "PASS",
     "touch_controls": "PASS",
     "victory_state": "PASS",
     "modifier_progression": "PASS",
