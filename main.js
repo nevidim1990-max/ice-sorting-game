@@ -543,8 +543,6 @@
     bind();
     updateMute();
     showMenu();
-    showOverlay('splash');
-    setTimeout(() => { if (screen === 'menu' && $('splash').classList.contains('active')) showOverlay(null); }, 1500);
     if (levels.some(level => level.error)) $('status-line').textContent = 'Некоторые участки скрыты: в исходных данных есть ошибки';
   }
 

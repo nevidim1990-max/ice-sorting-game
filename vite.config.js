@@ -35,6 +35,7 @@ function staticPackage() {
             '199/199 manifest files present',
             'All 12 runtime boards have solver-verified routes within their move limits',
             'All 12 levels completed in browser; final campaign screen reached',
+            'Startup menu is immediately visible and the start button responds',
             'First level completed in 8 moves and 3 pushes at desktop size',
             'Mobile layout, touch movement, undo, and pause checked at 390x844',
             'Legacy save migrated and in-progress level resumed from menu'
