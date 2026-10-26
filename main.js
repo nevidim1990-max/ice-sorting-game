@@ -144,9 +144,18 @@
     document.querySelectorAll('.overlay').forEach(node => node.classList.toggle('active', node.id === id));
   }
 
+  function fitGameCanvas(attempt = 0) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (scene?.fitCanvas()) return;
+      if (attempt < 3) fitGameCanvas(attempt + 1);
+    }));
+  }
+
   function showMenu() {
     screen = 'menu';
     gameActive = false;
+    $('app').classList.remove('in-game');
+    fitGameCanvas();
     showOverlay(null);
     $('intro-copy').hidden = false;
     $('game-side').hidden = true;
@@ -189,6 +198,8 @@
     activeLevel = level;
     screen = 'playing';
     gameActive = true;
+    $('app').classList.add('in-game');
+    fitGameCanvas();
     history = [];
     state = {
       player: { ...level.player }, boxes: level.boxes.map(box => ({ ...box })),
@@ -199,6 +210,7 @@
     $('game-side').hidden = false;
     $('level-kicker').textContent = `Участок ${String(index + 1).padStart(2, '0')} · Смена`;
     $('level-title').textContent = level.title;
+    $('station-title').textContent = level.title;
     $('level-objective').textContent = 'Поставьте каждую посылку на светящуюся ячейку-цель.';
     $('station-state').textContent = 'Сортировка идёт';
     $('station-code').textContent = `NORTH / ${String(index + 1).padStart(2, '0')}`;
@@ -232,9 +244,12 @@
       bonusUndos: run.bonusUndos || 0, collected: run.collected || 0, finished: false
     };
     screen = 'playing'; gameActive = true; history = [];
+    $('app').classList.add('in-game');
+    fitGameCanvas();
     $('intro-copy').hidden = true; $('game-side').hidden = false;
     $('level-kicker').textContent = `Участок ${String(level.index + 1).padStart(2, '0')} · Смена`;
     $('level-title').textContent = level.title;
+    $('station-title').textContent = level.title;
     $('level-objective').textContent = 'Поставьте каждую посылку на светящуюся ячейку-цель.';
     $('station-state').textContent = 'Сортировка идёт';
     $('station-code').textContent = `NORTH / ${String(level.index + 1).padStart(2, '0')}`;
@@ -400,7 +415,16 @@
     async loadLevel(level, nextState) {
       activeLevel = level; state = nextState;
       await Promise.all(level.refs.map(ref => this.texture(ref)));
+      this.fitCanvas();
       this.renderBoard();
+    }
+    fitCanvas() {
+      if (!this.scale?.resize) return false;
+      const { width, height } = $('game-canvas').getBoundingClientRect();
+      if (width <= 0 || height <= 0) return false;
+      const changed = this.scale.width !== width || this.scale.height !== height;
+      if (changed) this.scale.resize(width, height);
+      return changed;
     }
     clear() { this.children.removeAll(true); this.actorObjects = []; this.tileObjects = []; this.extraObjects = []; }
     preview() {
@@ -414,18 +438,19 @@
       this.clear();
       const width = this.scale.width, height = this.scale.height;
       this.add.rectangle(width / 2, height / 2, width, height, 0x081720, 0.2).setDepth(-120);
-      const bgRef = activeLevel.micro.parallax_layers?.[0]?.entity_id;
-      const bg = bgRef && this.textures.exists(`asset:${bgRef}`) ? this.add.image(width / 2, height / 2, `asset:${bgRef}`) : null;
-      if (bg) bg.setDisplaySize(width, height).setAlpha(.18).setDepth(-110);
-      const cellSize = Math.floor(Math.min((width - 80) / activeLevel.cols, (height - 70) / activeLevel.rows, 94));
+      const horizontalMargin = Math.min(80, Math.max(16, width * .04));
+      const verticalMargin = Math.min(150, Math.max(64, height * .18));
+      const cellSize = Math.floor(Math.min((width - horizontalMargin) / activeLevel.cols, (height - verticalMargin) / activeLevel.rows, 136));
       const boardW = cellSize * activeLevel.cols, boardH = cellSize * activeLevel.rows;
       this.origin = { x: (width - boardW) / 2, y: (height - boardH) / 2, cell: cellSize };
       this.add.rectangle(width / 2, height / 2, boardW + 30, boardH + 30, 0x0c2732, .82).setStrokeStyle(1, 0x85cedb, .24).setDepth(-4);
       for (let row = 0; row < activeLevel.rows; row++) for (let col = 0; col < activeLevel.cols; col++) {
         const cell = cellAt(row, col), x = this.origin.x + (col + .5) * cellSize, y = this.origin.y + (row + .5) * cellSize;
         const key = cell.asset && `asset:${cell.asset}`;
-        if (key && this.textures.exists(key)) this.add.image(x, y, key).setDisplaySize(cellSize - 1, cellSize - 1).setDepth(0);
-        else this.add.rectangle(x, y, cellSize - 2, cellSize - 2, cell.wall ? 0x254957 : cell.goal ? 0x98704c : 0x315969).setDepth(0);
+        this.add.rectangle(x, y, cellSize - 2, cellSize - 2, 0x09232d).setStrokeStyle(2, 0x79bac9, .8).setDepth(-1);
+        if (key && this.textures.exists(key)) this.add.image(x, y, key).setDisplaySize(cellSize - 8, cellSize - 8).setDepth(0);
+        else this.add.rectangle(x, y, cellSize - 8, cellSize - 8, cell.wall ? 0x243943 : cell.goal ? 0xd08037 : 0x39899a).setDepth(0);
+        if (cell.wall) this.add.rectangle(x, y, cellSize - 8, cellSize - 8, 0x03121a, .58).setDepth(1);
         this.tileObjects.push({ x, y, row, col });
       }
       for (const deco of activeLevel.micro.decorative_layout || []) {
