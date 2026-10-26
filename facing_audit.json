@@ -7,6 +7,6 @@
     "detected": "front",
     "view": "top_down",
     "action": "none",
-    "result": "PASS"
+    "result": "PASS_VISUAL_CHECK"
   }
 ]

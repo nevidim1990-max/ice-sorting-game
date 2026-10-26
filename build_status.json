@@ -1,15 +1,30 @@
 {
-  "status": "QA_PASS",
-  "build": "STATIC_SPA",
-  "verified": [
-    "Vite static build",
-    "199/199 manifest files present",
-    "All 12 runtime boards have solver-verified routes within their move limits",
-    "All 12 levels completed in browser; final campaign screen reached",
-    "Startup menu is immediately visible and the start button responds",
-    "First level completed in 8 moves and 3 pushes at desktop size",
-    "Mobile layout, touch movement, undo, and pause checked at 390x844",
-    "Legacy save migrated and in-progress level resumed from menu"
+  "status": "RETEST_REQUIRED",
+  "reason": "Static checks and targeted browser tests passed; the full playthrough and release gate remain incomplete.",
+  "build": "vite build",
+  "data_files": [
+    "theme.json",
+    "lore.json",
+    "entities.json",
+    "progression.json",
+    "asset_spec.json",
+    "engine_spec.json"
   ],
-  "blockers": []
+  "asset_count": 199,
+  "missing_assets": [],
+  "facing_audit": "facing_audit.json",
+  "qa": {
+    "data_integrity": "PASS",
+    "critical_assets": "PASS",
+    "static_bundle": "PASS",
+    "level_card_localization": "PASS",
+    "stage_launches": "PASS",
+    "responsive_visual_review": "PASS",
+    "touch_controls": "PASS",
+    "victory_state": "PASS",
+    "modifier_progression": "PASS",
+    "browser_playthrough": "PARTIAL",
+    "full_playthrough": "PENDING",
+    "release_gate": "PENDING"
+  }
 }
