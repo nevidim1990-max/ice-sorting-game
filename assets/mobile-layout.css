@@ -1,0 +1,10 @@
+@media (max-width: 760px) {
+  .brand-lockup > div {
+    min-width: 0;
+  }
+
+  .brand-lockup strong,
+  .brand-lockup small {
+    max-width: 100%;
+  }
+}
