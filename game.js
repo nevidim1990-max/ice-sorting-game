@@ -245,6 +245,23 @@
     return progression.map((macro, index) => {
       const micro = macro.level_package.micro_levels[0];
       const map = micro.tile_map;
+      if (macro.macro_level_id === 'macro_level_03') {
+        map.grid[1] = 'ECCCCCE';
+        map.grid[3] = 'ECCTCCE';
+      }
+      if (macro.macro_level_id === 'macro_level_07') map.grid[4] = 'OCCCTOCCC';
+      if (macro.macro_level_id === 'macro_level_06') {
+        map.grid[0] = 'OOOOCCOOO';
+        map.grid[6] = 'OCCCCCCCO';
+      }
+      if (macro.macro_level_id === 'macro_level_08') {
+        for (const [row, col] of [[1, 2], [1, 6], [4, 3], [7, 3]]) {
+          const cells = map.grid[row].split('');
+          cells[col] = 'O';
+          map.grid[row] = cells.join('');
+        }
+      }
+      if (macro.macro_level_id === 'macro_level_11') map.grid[0] = 'OOOCCCCCOOO';
       const board = { rows: map.rows, cols: map.cols, grid: map.grid, walls: new Set(), goals: new Set() };
       const allGoals = [];
       for (let row = 0; row < map.rows; row++) {
@@ -256,6 +273,14 @@
       }
 
       const entries = getZoneEntries(micro);
+      if (macro.macro_level_id === 'macro_level_06') {
+        const upperParcel = entries.find((item) => item.entity_id === 'entity_004' && item.row === 1 && item.col === 3);
+        if (upperParcel) upperParcel.col = 5;
+      }
+      if (macro.macro_level_id === 'macro_level_09') {
+        const bottomBox = entries.find((item) => item.entity_id === 'entity_002' && item.row === 8 && item.col === 2);
+        if (bottomBox) bottomBox.row = 7;
+      }
       const placements = entries.filter((item) => ['player', 'pushable'].includes(entityById[item.entity_id]?.type));
       const playerItem = placements.find((item) => entityById[item.entity_id]?.type === 'player') || micro.start_point;
       const player = { row: playerItem.row, col: playerItem.col };
